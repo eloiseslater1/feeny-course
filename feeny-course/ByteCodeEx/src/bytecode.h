@@ -14,7 +14,8 @@ typedef enum {
   STRING_VAL,
   METHOD_VAL,
   SLOT_VAL,
-  CLASS_VAL
+  CLASS_VAL,
+  ARRAY_VAL
 } ValTag;
 
 typedef enum {
@@ -45,6 +46,11 @@ typedef struct {
   ValTag tag;
   int value;
 } IntValue;
+
+typedef struct {
+  ValTag tag;
+  int* value;
+} ArrayValue;
 
 typedef struct {
   ValTag tag;

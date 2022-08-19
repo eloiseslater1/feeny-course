@@ -10,16 +10,16 @@ void interpret(ht*, int entry_point);
 void run(VM* vm);
 void arthrimetic(char* string, Vector* stack);
 void add_labels(ht* hm, Vector* const_pool);
-IntValue* fe_add(IntValue* reciever, IntValue* b);
-IntValue* fe_sub(IntValue* reciever, IntValue* b);
-IntValue* fe_mult(IntValue* reciever, IntValue* b);
-IntValue* fe_div(IntValue* reciever, IntValue* b);
-IntValue* fe_mod(IntValue* reciever, IntValue* b);
-Value* fe_lt(IntValue* reciever, IntValue* b);
-Value* fe_le(IntValue* reciever, IntValue* b);
-Value* fe_gt(IntValue* reciever, IntValue* b);
-Value* fe_ge(IntValue* reciever, IntValue* b);
-Value* fe_eq(IntValue* reciever, IntValue* b);
+IntValue* fe_add(void** args);
+IntValue* fe_sub(void** args);
+IntValue* fe_mult(void** args);
+IntValue* fe_div(void** args);
+IntValue* fe_mod(void** args);
+Value* fe_lt(void** args);
+Value* fe_le(void** args);
+Value* fe_gt(void** args);
+Value* fe_ge(void** args);
+Value* fe_eq(void** args);
 IntValue* create_int(int a);
 Value* create_null_or_int(int a);
 ht* init_builtins();
@@ -110,6 +110,17 @@ void run(VM* vm) {
       }
       case ARRAY_OP: {
         printf("   array");
+        IntValue* initial = (IntValue*) vector_pop(vm->stack);
+        IntValue* len = (IntValue*) vector_pop(vm->stack);
+        int* array = (int*) malloc(sizeof(int) * len->value);
+        for (int i = 0; i < len->value; i++) {
+          array[i] = initial->value;
+        }
+        ArrayValue* value = malloc(sizeof(ArrayValue));
+        value->tag = ARRAY_VAL;
+        value->value = array;
+        vector_add(vm->stack, (void*)value);
+        vm->IP++;
         break;
       }
       case OBJECT_OP: {
@@ -137,12 +148,16 @@ void run(VM* vm) {
         }
         Value* reciever = ((Value*)args[0]); 
         switch (reciever->tag) {
+          case (ARRAY_VAL):
           case (INT_VAL): {
-            Value* (*func)(IntValue*, IntValue*) = ht_get(vm->inbuilt, method_name);
-            Value* return_value = (*func)((IntValue*)reciever, (IntValue*) args[1]); 
+            Value* (*func)(void**) = ht_get(vm->inbuilt, method_name);
+            Value* return_value = (*func)(args); 
             vector_add(vm->stack, (void*) return_value);
             vm->IP++;
             break;
+          }
+          case (ARRAY_VAL): {
+
           }
           default:
             printf("Unknown value");
@@ -178,11 +193,17 @@ void run(VM* vm) {
       case SET_GLOBAL_OP: {
         SetGlobalIns* i = (SetGlobalIns*)ins;
         printf("   set global #%d", i->name);
+        StringValue* string = (StringValue*) vector_get(vm->const_pool, i->name);
+        ht_set(vm->hm, string->value, vector_peek(vm->stack));
+        vm->IP++;
         break;
       }
       case GET_GLOBAL_OP: {
         GetGlobalIns* i = (GetGlobalIns*)ins;
         printf("   get global #%d", i->name);
+        StringValue* string = (StringValue*) vector_get(vm->const_pool, i->name);
+        vector_add(vm->stack, ht_get(vm->hm, string->value));
+        vm->IP++;
         break;
       }
       case BRANCH_OP: {
@@ -246,47 +267,58 @@ ht* init_builtins() {
   ht_set(inbuilt_hash, "gt", &fe_gt);
   ht_set(inbuilt_hash, "ge", &fe_ge);
   ht_set(inbuilt_hash, "eq", &fe_eq);
+  ht_set(inbuilt_hash, "set", &fe_set);
+  ht_set(inbuilt_hash, "get", &fe_set);
   return inbuilt_hash;
 }
 
-IntValue* fe_add(IntValue* reciever, IntValue* b) {
-  return create_int(reciever->value + b->value);
+void fe_set(void** args) {
+  ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value] = ((IntValue*) args[2])->value;
 }
 
-IntValue* fe_sub(IntValue* reciever, IntValue* b) {
-  return create_int(reciever->value - b->value);
+IntValue* fe_get(void** args) {
+  int value = ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value];
+  return create_int(value);
 }
 
-IntValue* fe_mult(IntValue* reciever, IntValue* b) {
-  return create_int(reciever->value * b->value);
+IntValue* fe_add(void** args) {
+  return create_int(((IntValue*) args[0])->value + ((IntValue*) args[1])->value);
 }
 
-IntValue* fe_div(IntValue* reciever, IntValue* b) {
-  return create_int(reciever->value / b->value);
+IntValue* fe_sub(void** args) {
+  return create_int(((IntValue*) args[0])->value - ((IntValue*) args[1])->value);
 }
 
-IntValue* fe_mod(IntValue* reciever, IntValue* b) {
-  return create_int(reciever->value % b->value);
+IntValue* fe_mult(void** args) {
+  return create_int(((IntValue*) args[0])->value * ((IntValue*) args[1])->value);
 }
 
-Value* fe_lt(IntValue* reciever, IntValue* b) {
-  return create_null_or_int(reciever->value < b->value);
+IntValue* fe_div(void** args) {
+  return create_int(((IntValue*) args[0])->value / ((IntValue*) args[1])->value);
 }
 
-Value* fe_le(IntValue* reciever, IntValue* b) {
-  return create_null_or_int(reciever->value <= b->value);
+IntValue* fe_mod(void** args) {
+  return create_int(((IntValue*) args[0])->value % ((IntValue*) args[1])->value);
 }
 
-Value* fe_gt(IntValue* reciever, IntValue* b) {
-  return create_null_or_int(reciever->value > b->value);
+Value* fe_lt(void** args) {
+  return create_int(((IntValue*) args[0])->value < ((IntValue*) args[1])->value);
 }
 
-Value* fe_ge(IntValue* reciever, IntValue* b) {
-  return create_null_or_int(reciever->value >= b->value);
+Value* fe_le(void** args) {
+  return create_int(((IntValue*) args[0])->value <= ((IntValue*) args[1])->value);
 }
 
-Value* fe_eq(IntValue* reciever, IntValue* b) {
-  return create_null_or_int(reciever->value == b->value);
+Value* fe_gt(void** args) {
+  return create_int(((IntValue*) args[0])->value > ((IntValue*) args[1])->value);
+}
+
+Value* fe_ge(void** args) {
+  return create_int(((IntValue*) args[0])->value >= ((IntValue*) args[1])->value);
+}
+
+Value* fe_eq(void** args) {
+  return create_int(((IntValue*) args[0])->value == ((IntValue*) args[1])->value);
 }
 
 Value* create_null_or_int(int a) {
