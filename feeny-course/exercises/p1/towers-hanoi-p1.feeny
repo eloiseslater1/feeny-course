@@ -1,0 +1,71 @@
+defn and (a, b):
+    if a : b
+    else : b
+
+defn stack (capacity, name) :
+    object :
+        var name = name 
+        var array = array(capacity, 0)
+        var capacity = capacity
+        var head = 0
+        method initiate () :
+            while this.head < this.capacity:
+                this.array[this.head] = this.capacity - this.head
+                this.head = this.head + 1
+        method push (value) :
+            this.array[this.head] = value
+            this.head = this.head + 1
+        method pop () :
+            this.head = this.head - 1
+            this.array[this.head]
+        method peek () :
+            this.array[this.head - 1]
+        method print () :
+            var i = 0
+            printf("stack: ~: ", this.name)
+            while i < this.head:
+                printf("~ ", this.array[i])
+                i = i + 1
+            printf("\n")
+
+defn smaller-plate (from-stack, to-stack):
+    if to-stack.head == 0 : 1
+    else: from-stack.peek() < to-stack.peek() 
+
+defn check-valid-move (from-stack, to-stack):
+    var smaller-plate = smaller-plate(from-stack, to-stack)
+    var correct-value = from-stack.peek() > 0
+    and(smaller-plate, correct-value)
+
+defn move-plate (from-stack, to-stack) :
+    if check-valid-move(from-stack, to-stack) :
+        to-stack.push(from-stack.pop())
+        printf("Move plate from stack ~ to stack ~.\n", from-stack.name, to-stack.name)
+    else :
+        printf("Invalid move for: from ~ stack to ~ stack.\n", from-stack.name, to-stack.name)
+        from-stack.print()
+        to-stack.print()
+
+defn print-stacks (stack-a, stack-b, stack-c) :
+    stack-a.print()
+    stack-b.print()
+    stack-c.print()
+
+defn move-recur (disk, source, dest, aux) :
+    if disk == 1:
+        move-plate(source, dest)
+    else:
+        move-recur(disk - 1, source, aux, dest)
+        move-plate(source, dest)
+        move-recur(disk - 1, aux, dest, source)
+
+defn main () :
+    var stack-size = 6
+    var stack-a = stack(stack-size, 1)
+    var stack-b = stack(stack-size, 2)
+    var stack-c = stack(stack-size, 3)
+    stack-a.initiate()
+    move-recur(stack-size, stack-a, stack-b, stack-c)
+    print-stacks(stack-a, stack-b, stack-c)
+
+main()

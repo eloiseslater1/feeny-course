@@ -1,0 +1,21 @@
+#ifndef VM_H
+#define VM_H
+
+#include "inbuilt.h"
+#include "bytecode.h"
+#include "ht.h"
+#include "utils.h"
+#include "frame.h"
+
+typedef struct {
+    Vector* stack;
+    ht* hm;
+    Frame* current_frame;
+    Vector* const_pool;
+    void** IP;
+} VM;
+
+void interpret_bc (Program* prog);
+VM* init_vm(Program* p);
+
+#endif
