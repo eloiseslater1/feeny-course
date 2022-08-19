@@ -108,7 +108,10 @@ void run(VM* vm) {
         CallIns* i = (CallIns*)ins;
         printf("   call #%d %d", i->name, i->arity);
         MethodValue* method = (MethodValue*) ht_get(vm->hm, ((StringValue*) vector_get(vm->const_pool, i->name))->value);
-        Frame* current_frame = make_frame(method->nargs + method->nlocals, current_frame, vm->IP);
+        vm->current_frame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
+        for (int j = 0; j < i->arity; j++) {
+          vm->current_frame->variables[j] = vector_pop(vm->stack);
+        }
         vm->IP = &method->code->array[0];
         break;
       }
@@ -149,7 +152,8 @@ void run(VM* vm) {
       case RETURN_OP: {
         printf("   return");
         if (vm->current_frame->parent != NULL) {
-          vm->IP = vm->current_frame->return_address++;
+          vm->IP = vm->current_frame->return_address;
+          vm->current_frame = vm->current_frame->parent;
         } else {
           exit(1);
         }

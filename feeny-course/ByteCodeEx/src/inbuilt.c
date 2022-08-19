@@ -41,6 +41,7 @@ void format_print(StringValue* format_string, Vector* stack, int nargs) {
     while (*string != '\0') {
         if (*string == '~') {
             printf("%d", ((IntValue*) vector_pop(stack))->value);
+            string++;
         }
         printf("%c", *string);
         string++;
