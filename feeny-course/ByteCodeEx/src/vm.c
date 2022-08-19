@@ -9,12 +9,30 @@ void add_globals(ht* hm, Vector* const_pool, Vector* globals);
 void interpret(ht*, int entry_point);
 void run(VM* vm);
 void arthrimetic(char* string, Vector* stack);
+void add_labels(ht* hm, Vector* const_pool);
+IntValue* fe_add(IntValue* reciever, IntValue* b);
+IntValue* fe_sub(IntValue* reciever, IntValue* b);
+IntValue* fe_mult(IntValue* reciever, IntValue* b);
+IntValue* fe_div(IntValue* reciever, IntValue* b);
+IntValue* fe_mod(IntValue* reciever, IntValue* b);
+Value* fe_lt(IntValue* reciever, IntValue* b);
+Value* fe_le(IntValue* reciever, IntValue* b);
+Value* fe_gt(IntValue* reciever, IntValue* b);
+Value* fe_ge(IntValue* reciever, IntValue* b);
+Value* fe_eq(IntValue* reciever, IntValue* b);
+IntValue* create_int(int a);
+Value* create_null_or_int(int a);
+ht* init_builtins();
+void format_print(StringValue* format_string, Vector* stack, int nargs);
 
 VM* init_vm(Program* p) {
   VM* vm = malloc(sizeof(VM));
   vm->stack = make_vector();
   vm->hm = ht_create();
+  vm->labels = ht_create();
+  vm->inbuilt = init_builtins();
   add_globals(vm->hm, p->values, p->slots);
+  add_labels(vm->labels, p->values);
   MethodValue* entry_func = (MethodValue*) vector_get(p->values, p->entry);
   vm->IP = &entry_func->code->array[0];
   vm->current_frame =  make_frame(entry_func->nargs + entry_func->nlocals, 
@@ -38,6 +56,23 @@ void interpret_bc (Program* p) {
   run(vm);
 }
 
+void add_labels(ht* hm, Vector* const_pool) {
+  for (int i = 0; i < const_pool->size; i++) {
+    Value* value = (Value*) vector_get(const_pool, i);
+    if (value->tag == METHOD_VAL) {
+      MethodValue* method = (MethodValue*) value;
+      for (int j = 0; j < method->code->size; j++) {
+        ByteIns* ins = vector_get(method->code, j);
+        if (ins->tag == LABEL_OP) {
+          char* key =  ((StringValue*)(vector_get(const_pool, ((LabelIns*)ins)->name)))->value;
+          ByteIns* ins = (ByteIns*) method->code->array[j];
+          ht_set(hm, key, &method->code->array[j]);
+        }
+      }
+    }
+  }
+}
+
 void add_globals(ht* hm, Vector* const_pool, Vector* globals) {
   for (int i = 0; i < globals->size; i++) {
     void* value_idx = vector_get(const_pool, (int)vector_get(globals, i));
@@ -55,12 +90,13 @@ void run(VM* vm) {
       case LABEL_OP: {
         LabelIns* i = (LabelIns*)ins;
         printf("label #%d", i->name);
+        vm->IP++;
         break;
       }
       case LIT_OP: {
         LitIns* i = (LitIns*)ins;
-        vector_add(vm->stack, vector_get(vm->const_pool, i->idx));
         printf("   lit #%d", i->idx);
+        vector_add(vm->stack, vector_get(vm->const_pool, i->idx));
         vm->IP++;
         break;
       }
@@ -94,14 +130,24 @@ void run(VM* vm) {
       case CALL_SLOT_OP: {
         CallSlotIns* i = (CallSlotIns*)ins;
         printf("   call-slot #%d %d", i->name, i->arity);
+        char* method_name = ((StringValue*) vector_get(vm->const_pool, i->name))->value;
         void** args = malloc(sizeof(void*) * i->arity);
         for (int j = 0; j < i->arity; j++) {
            args[i->arity - j - 1] = vector_pop(vm->stack);
         }
-        char* method_name = ((StringValue*) vector_get(vm->const_pool, i->name))->value;
-        do_function(method_name, vm->stack, args);
-        IntValue* value  = (IntValue*) vector_peek(vm->stack);
-        vm->IP++;
+        Value* reciever = ((Value*)args[0]); 
+        switch (reciever->tag) {
+          case (INT_VAL): {
+            Value* (*func)(IntValue*, IntValue*) = ht_get(vm->inbuilt, method_name);
+            Value* return_value = (*func)((IntValue*)reciever, (IntValue*) args[1]); 
+            vector_add(vm->stack, (void*) return_value);
+            vm->IP++;
+            break;
+          }
+          default:
+            printf("Unknown value");
+            exit(-1);
+        }
         break;
       }
       case CALL_OP: {
@@ -142,11 +188,21 @@ void run(VM* vm) {
       case BRANCH_OP: {
         BranchIns* i = (BranchIns*)ins;
         printf("   branch #%d", i->name);
+        Value* value = (Value*) vector_pop(vm->stack);
+        if (value->tag != NULL_VAL) {
+          StringValue* value = (StringValue*) vector_get(vm->const_pool, i->name);
+          vm->IP = ht_get(vm->labels, value->value);
+          continue;
+        }
+        vm->IP++;
         break;
       }
       case GOTO_OP: {
         GotoIns* i = (GotoIns*)ins;
         printf("   goto #%d", i->name);
+        StringValue* value = (StringValue*) vector_get(vm->const_pool, i->name);
+        vm->IP = ht_get(vm->labels, value->value);
+        ByteIns* ins = (ByteIns*) *vm->IP;
         break;
       }
       case RETURN_OP: {
@@ -172,4 +228,97 @@ void run(VM* vm) {
     }
   }
   free_vm(vm);
+}
+
+
+//===================== BUILTINS ================================
+
+
+ht* init_builtins() {
+  ht* inbuilt_hash = ht_create();
+  ht_set(inbuilt_hash, "add", &fe_add);
+  ht_set(inbuilt_hash, "sub", &fe_sub);
+  ht_set(inbuilt_hash, "mult", &fe_mult);
+  ht_set(inbuilt_hash, "div", &fe_div);
+  ht_set(inbuilt_hash, "mod", &fe_mod);
+  ht_set(inbuilt_hash, "lt", &fe_lt);
+  ht_set(inbuilt_hash, "le", &fe_le);
+  ht_set(inbuilt_hash, "gt", &fe_gt);
+  ht_set(inbuilt_hash, "ge", &fe_ge);
+  ht_set(inbuilt_hash, "eq", &fe_eq);
+  return inbuilt_hash;
+}
+
+IntValue* fe_add(IntValue* reciever, IntValue* b) {
+  return create_int(reciever->value + b->value);
+}
+
+IntValue* fe_sub(IntValue* reciever, IntValue* b) {
+  return create_int(reciever->value - b->value);
+}
+
+IntValue* fe_mult(IntValue* reciever, IntValue* b) {
+  return create_int(reciever->value * b->value);
+}
+
+IntValue* fe_div(IntValue* reciever, IntValue* b) {
+  return create_int(reciever->value / b->value);
+}
+
+IntValue* fe_mod(IntValue* reciever, IntValue* b) {
+  return create_int(reciever->value % b->value);
+}
+
+Value* fe_lt(IntValue* reciever, IntValue* b) {
+  return create_null_or_int(reciever->value < b->value);
+}
+
+Value* fe_le(IntValue* reciever, IntValue* b) {
+  return create_null_or_int(reciever->value <= b->value);
+}
+
+Value* fe_gt(IntValue* reciever, IntValue* b) {
+  return create_null_or_int(reciever->value > b->value);
+}
+
+Value* fe_ge(IntValue* reciever, IntValue* b) {
+  return create_null_or_int(reciever->value >= b->value);
+}
+
+Value* fe_eq(IntValue* reciever, IntValue* b) {
+  return create_null_or_int(reciever->value == b->value);
+}
+
+Value* create_null_or_int(int a) {
+  if (a) {
+    return (Value*) create_int(a);
+  }
+  else {
+    Value* value = malloc(sizeof(Value));
+    value->tag = NULL_VAL;
+    return value;
+  }
+}
+
+IntValue* create_int(int a) {
+  IntValue* value = malloc(sizeof(IntValue));
+  value->value = a;
+  value->tag = INT_VAL;
+  return value;
+}
+
+void format_print(StringValue* format_string, Vector* stack, int nargs) {
+    printf("\n");
+    char *string = format_string->value;
+    while (*string != '\0') {
+        if (*string == '~') {
+            printf("%d", ((IntValue*) vector_pop(stack))->value);
+            string++;
+        }
+        printf("%c", *string);
+        string++;
+    }
+    Value* null = (Value*) malloc(sizeof(NULL_VAL));
+    null->tag = NULL_VAL;
+    vector_add(stack, (void*) null);
 }

@@ -1,7 +1,6 @@
 #ifndef VM_H
 #define VM_H
 
-#include "inbuilt.h"
 #include "bytecode.h"
 #include "ht.h"
 #include "utils.h"
@@ -10,6 +9,8 @@
 typedef struct {
     Vector* stack;
     ht* hm;
+    ht* labels;
+    ht* inbuilt;
     Frame* current_frame;
     Vector* const_pool;
     void** IP;
