@@ -49,13 +49,14 @@ typedef struct {
 
 typedef struct {
   ValTag tag;
-  int* value;
-} ArrayValue;
+  char* value;
+} StringValue;
 
 typedef struct {
   ValTag tag;
-  char* value;
-} StringValue;
+  int* value;
+  int len;
+} ArrayValue;
 
 typedef struct {
   ValTag tag;

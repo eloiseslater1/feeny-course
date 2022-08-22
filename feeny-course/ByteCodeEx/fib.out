@@ -112,4 +112,5880 @@ Entry : #24
 label #16
    get local 0
    lit #19
-   call-slot #20 2Peek from empty vector.
+   call-slot #20 2
+method: "lt"using value 0 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 0 and 0
+
+   branch #0
+label #0
+   lit #6
+label #1
+   return
+   printf #18 2
+Fib(1) = 0
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 0 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 1 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 1 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 1 and 1
+
+   branch #4
+label #4
+   lit #6
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(1) = 1
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 2 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 2 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 2 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(2) = 2
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 2 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 3 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 3 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 3 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(3) = 3
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 3 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 4 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 4 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 4 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(5) = 4
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 4 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 5 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 5 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 5 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(8) = 5
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 5 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 6 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 6 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 6 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(13) = 6
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 6 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 7 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 7 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 7 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(21) = 7
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 7 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 8 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 8 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 8 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(34) = 8
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 8 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 9 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 9 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 9 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(55) = 9
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 9 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 10 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 10 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 10 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(89) = 10
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 10 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 11 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 11 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 11 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(144) = 11
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 11 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 12 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 12 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 12 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(233) = 12
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 12 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 13 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 13 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 13 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 13 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 13 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 144 and 233
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(377) = 13
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 13 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 14 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 14 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 14 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 14 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 14 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 13 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 13 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 144 and 233
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 233 and 377
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(610) = 14
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 14 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 15 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 15 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 15 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 15 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 15 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 14 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 14 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 13 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 13 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 144 and 233
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 233 and 377
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 377 and 610
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(987) = 15
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 15 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 16 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 16 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 16 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 16 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 16 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 15 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 15 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 14 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 14 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 13 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 13 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 144 and 233
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 233 and 377
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 377 and 610
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 610 and 987
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(1597) = 16
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 16 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 17 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 17 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 17 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 17 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 17 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 16 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 16 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 15 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 15 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 14 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 14 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 13 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 13 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 144 and 233
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 233 and 377
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 377 and 610
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 610 and 987
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 987 and 1597
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(2584) = 17
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 17 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 18 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 18 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 18 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 18 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 18 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 17 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 17 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 16 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 16 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 15 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 15 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 14 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 14 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 13 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 13 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 144 and 233
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 233 and 377
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 377 and 610
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 610 and 987
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 987 and 1597
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1597 and 2584
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(4181) = 18
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 18 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 19 and 20
+
+   branch #17
+label #17
+   get local 0
+   get local 0
+   call #14 1
+   get local 0
+   lit #2
+   call-slot #3 2
+method: "eq"using value 19 and 0
+
+   branch #0
+   get local 0
+   lit #6
+   call-slot #3 2
+method: "eq"using value 19 and 1
+
+   branch #4
+   lit #6
+   set local 1
+   drop
+   lit #6
+   set local 2
+   drop
+   goto #7
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 19 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 1
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 19 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 18 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1 and 2
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 18 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 17 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2 and 3
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 17 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 16 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 3 and 5
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 16 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 15 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 5 and 8
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 15 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 14 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 8 and 13
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 14 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 13 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 13 and 21
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 13 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 12 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 21 and 34
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 12 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 11 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 34 and 55
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 11 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 10 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 55 and 89
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 10 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 9 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 89 and 144
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 9 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 8 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 144 and 233
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 8 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 7 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 233 and 377
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 7 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 6 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 377 and 610
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 6 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 5 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 610 and 987
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 5 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 4 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 987 and 1597
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 4 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 3 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 1597 and 2584
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 3 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 2 and 2
+
+   branch #8
+label #8
+   get local 1
+   get local 2
+   call-slot #9 2
+method: "add"using value 2584 and 4181
+
+   set local 3
+   drop
+   get local 2
+   set local 1
+   drop
+   get local 3
+   set local 2
+   drop
+   get local 0
+   lit #6
+   call-slot #10 2
+method: "sub"using value 2 and 1
+
+   set local 0
+   drop
+label #7
+   get local 0
+   lit #11
+   call-slot #12 2
+method: "ge"using value 1 and 2
+
+   branch #8
+   lit #13
+   drop
+   get local 2
+   goto #5
+label #5
+   goto #1
+label #1
+   return
+   printf #18 2
+Fib(6765) = 19
+
+   drop
+   get local 0
+   lit #6
+   call-slot #9 2
+method: "add"using value 19 and 1
+
+   set local 0
+   drop
+label #16
+   get local 0
+   lit #19
+   call-slot #20 2
+method: "lt"using value 20 and 20
+
+   branch #17
+   lit #13
+   return
+   drop
+   lit #13
+   return

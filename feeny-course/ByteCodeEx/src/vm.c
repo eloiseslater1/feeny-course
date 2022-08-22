@@ -10,20 +10,23 @@ void interpret(ht*, int entry_point);
 void run(VM* vm);
 void arthrimetic(char* string, Vector* stack);
 void add_labels(ht* hm, Vector* const_pool);
-IntValue* fe_add(void** args);
-IntValue* fe_sub(void** args);
-IntValue* fe_mult(void** args);
-IntValue* fe_div(void** args);
-IntValue* fe_mod(void** args);
+Value* fe_set(void** args);
+Value* fe_get(void** args);
+Value* fe_len(void** args);
+Value* fe_add(void** args);
+Value* fe_sub(void** args);
+Value* fe_mult(void** args);
+Value* fe_div(void** args);
+Value* fe_mod(void** args);
 Value* fe_lt(void** args);
 Value* fe_le(void** args);
 Value* fe_gt(void** args);
 Value* fe_ge(void** args);
 Value* fe_eq(void** args);
-IntValue* create_int(int a);
+Value* create_int(int a);
 Value* create_null_or_int(int a);
 ht* init_builtins();
-void format_print(StringValue* format_string, Vector* stack, int nargs);
+Value* format_print(StringValue* format_string, void** args);
 
 VM* init_vm(Program* p) {
   VM* vm = malloc(sizeof(VM));
@@ -104,7 +107,12 @@ void run(VM* vm) {
         PrintfIns* i = (PrintfIns*)ins;
         printf("   printf #%d %d", i->format, i->arity);
         StringValue* string_format = (StringValue*) vector_get(vm->const_pool, i->format);
-        format_print(string_format, vm->stack, i->arity);
+        void** args = malloc(sizeof(void*) * i->arity);
+        for (int j = 0; j < i->arity; j++) {
+          args[i->arity - j - 1] = vector_pop(vm->stack);
+        }
+        Value* null = format_print(string_format, args);
+        vector_add(vm->stack, null);
         vm->IP++;
         break;
       }
@@ -119,7 +127,9 @@ void run(VM* vm) {
         ArrayValue* value = malloc(sizeof(ArrayValue));
         value->tag = ARRAY_VAL;
         value->value = array;
-        vector_add(vm->stack, (void*)value);
+        value->len = len->value;
+        vector_add(vm->stack, (void *) value);
+        ArrayValue* arrayVal = (ArrayValue* ) vector_peek(vm->stack);
         vm->IP++;
         break;
       }
@@ -146,6 +156,11 @@ void run(VM* vm) {
         for (int j = 0; j < i->arity; j++) {
            args[i->arity - j - 1] = vector_pop(vm->stack);
         }
+        printf("\nmethod: ");
+        print_string(method_name);
+        for (int k = 0; k < i->arity; k++) {
+            printf("arg %d is: %d\n", k, ((IntValue*) args[k])->value);
+        }
         Value* reciever = ((Value*)args[0]); 
         switch (reciever->tag) {
           case (ARRAY_VAL):
@@ -155,9 +170,6 @@ void run(VM* vm) {
             vector_add(vm->stack, (void*) return_value);
             vm->IP++;
             break;
-          }
-          case (ARRAY_VAL): {
-
           }
           default:
             printf("Unknown value");
@@ -171,7 +183,7 @@ void run(VM* vm) {
         MethodValue* method = (MethodValue*) ht_get(vm->hm, ((StringValue*) vector_get(vm->const_pool, i->name))->value);
         vm->current_frame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
         for (int j = 0; j < i->arity; j++) {
-          vm->current_frame->variables[j] = vector_pop(vm->stack);
+          vm->current_frame->variables[i->arity - j - 1] = vector_pop(vm->stack);
         }
         vm->IP = &method->code->array[0];
         break;
@@ -257,6 +269,9 @@ void run(VM* vm) {
 
 ht* init_builtins() {
   ht* inbuilt_hash = ht_create();
+  ht_set(inbuilt_hash, "set", &fe_set);
+  ht_set(inbuilt_hash, "get", &fe_get);
+  ht_set(inbuilt_hash, "length", &fe_len);
   ht_set(inbuilt_hash, "add", &fe_add);
   ht_set(inbuilt_hash, "sub", &fe_sub);
   ht_set(inbuilt_hash, "mult", &fe_mult);
@@ -267,58 +282,65 @@ ht* init_builtins() {
   ht_set(inbuilt_hash, "gt", &fe_gt);
   ht_set(inbuilt_hash, "ge", &fe_ge);
   ht_set(inbuilt_hash, "eq", &fe_eq);
-  ht_set(inbuilt_hash, "set", &fe_set);
-  ht_set(inbuilt_hash, "get", &fe_set);
   return inbuilt_hash;
 }
 
-void fe_set(void** args) {
-  ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value] = ((IntValue*) args[2])->value;
+Value* fe_set(void** args) {
+  IntValue* pos = ((IntValue*) args[1]);
+  IntValue* value = ((IntValue*) args[2]);
+  ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value] = value->value;
+  printf("array value at position: %d is: %d\n", pos->value, ((ArrayValue*) args[0])->value[pos->value]);
+  return create_null_or_int(0);
 }
 
-IntValue* fe_get(void** args) {
+Value* fe_get(void** args) {
+  printf("hello");
   int value = ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value];
-  return create_int(value);
+  return create_null_or_int(value);
 }
 
-IntValue* fe_add(void** args) {
+Value* fe_len(void** args) {
+  return create_int(((ArrayValue* ) args[0])->len);
+}
+
+Value* fe_add(void** args) {
   return create_int(((IntValue*) args[0])->value + ((IntValue*) args[1])->value);
 }
 
-IntValue* fe_sub(void** args) {
+Value* fe_sub(void** args) {
   return create_int(((IntValue*) args[0])->value - ((IntValue*) args[1])->value);
 }
 
-IntValue* fe_mult(void** args) {
+Value* fe_mult(void** args) {
   return create_int(((IntValue*) args[0])->value * ((IntValue*) args[1])->value);
 }
 
-IntValue* fe_div(void** args) {
+Value* fe_div(void** args) {
   return create_int(((IntValue*) args[0])->value / ((IntValue*) args[1])->value);
 }
 
-IntValue* fe_mod(void** args) {
+Value* fe_mod(void** args) {
   return create_int(((IntValue*) args[0])->value % ((IntValue*) args[1])->value);
 }
 
 Value* fe_lt(void** args) {
-  return create_int(((IntValue*) args[0])->value < ((IntValue*) args[1])->value);
+  return create_null_or_int(((IntValue*) args[0])->value < ((IntValue*) args[1])->value);
 }
 
 Value* fe_le(void** args) {
-  return create_int(((IntValue*) args[0])->value <= ((IntValue*) args[1])->value);
+  return create_null_or_int(((IntValue*) args[0])->value <= ((IntValue*) args[1])->value);
 }
 
 Value* fe_gt(void** args) {
-  return create_int(((IntValue*) args[0])->value > ((IntValue*) args[1])->value);
+  return create_null_or_int(((IntValue*) args[0])->value > ((IntValue*) args[1])->value);
 }
 
 Value* fe_ge(void** args) {
-  return create_int(((IntValue*) args[0])->value >= ((IntValue*) args[1])->value);
+  return create_null_or_int(((IntValue*) args[0])->value >= ((IntValue*) args[1])->value);
 }
 
 Value* fe_eq(void** args) {
-  return create_int(((IntValue*) args[0])->value == ((IntValue*) args[1])->value);
+  return create_null_or_int(((IntValue*) args[0])->value == ((IntValue*) args[1])->value);
 }
 
 Value* create_null_or_int(int a) {
@@ -332,25 +354,27 @@ Value* create_null_or_int(int a) {
   }
 }
 
-IntValue* create_int(int a) {
+Value* create_int(int a) {
   IntValue* value = malloc(sizeof(IntValue));
   value->value = a;
   value->tag = INT_VAL;
-  return value;
+  return (Value*) value;
 }
 
-void format_print(StringValue* format_string, Vector* stack, int nargs) {
+Value* format_print(StringValue* format_string, void **args) {
     printf("\n");
     char *string = format_string->value;
+    int i = 0;
     while (*string != '\0') {
         if (*string == '~') {
-            printf("%d", ((IntValue*) vector_pop(stack))->value);
+            printf("%d", ((IntValue*) args[i])->value);
             string++;
+            i++;
         }
         printf("%c", *string);
         string++;
     }
     Value* null = (Value*) malloc(sizeof(NULL_VAL));
     null->tag = NULL_VAL;
-    vector_add(stack, (void*) null);
+    return null;
 }
