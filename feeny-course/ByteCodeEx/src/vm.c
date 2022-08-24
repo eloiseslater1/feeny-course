@@ -87,6 +87,7 @@ void add_globals(ht* hm, Vector* const_pool, Vector* globals) {
 
 void run(VM* vm) {
   while(vm->IP != NULL) {
+    printf("ip is : %p\n", vm->IP);
     ByteIns* ins = (ByteIns*) *vm->IP;
     printf("      ");
     for (int i = 0; i < vm->stack->size; i++) {
@@ -222,14 +223,31 @@ void run(VM* vm) {
             ClassValue* classVal = (ClassValue*) args[0];
             Frame* newFrame = make_frame(i->arity, vm->current_frame, vm->IP+1);
             newFrame->variables = args;
+            void** current_IP = vm->IP;
             for (int j = 0; j < classVal->slots->size; j++) {
               Value* value = (Value*) vector_get(classVal->slots, classVal->slots->size - j - 1); 
               if (value->tag == METHOD_VAL) {
                 MethodValue* methodVal = (MethodValue* ) value;
+                printf("\nmethodVal is %d\n", methodVal->name);
+                printf("\ni->name is %d\n", i->name);
                 if (methodVal->name == i->name) {
                   vm->IP = &methodVal->code->array[0];
                 }
               }
+            }
+            if (current_IP == vm->IP) {
+              ClassValue* parClass = (ClassValue*) vector_peek(vm->stack);
+              for (int j = 0; j < parClass->slots->size; j++) {
+              Value* value = (Value*) vector_get(parClass->slots, parClass->slots->size - j - 1); 
+              if (value->tag == METHOD_VAL) {
+                MethodValue* methodVal = (MethodValue* ) value;
+                printf("\nmethodVal is %d\n", methodVal->name);
+                printf("\ni->name is %d\n", i->name);
+                if (methodVal->name == i->name) {
+                  vm->IP = &methodVal->code->array[0];
+                }
+              }
+            }
             }
             vm->current_frame = newFrame;
             break;
@@ -358,7 +376,7 @@ Value* fe_set(void** args) {
 
 Value* fe_get(void** args) {
   int value = ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value];
-  return create_null_or_int(value);
+  return create_int(value);
 }
 
 Value* fe_len(void** args) {
