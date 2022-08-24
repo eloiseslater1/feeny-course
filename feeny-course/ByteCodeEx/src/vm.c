@@ -88,6 +88,11 @@ void add_globals(ht* hm, Vector* const_pool, Vector* globals) {
 void run(VM* vm) {
   while(vm->IP != NULL) {
     ByteIns* ins = (ByteIns*) *vm->IP;
+    printf("      ");
+    for (int i = 0; i < vm->stack->size; i++) {
+      print_value(vector_get(vm->stack, i));
+      printf(", ");
+    }
     printf("\n");
     switch(ins->tag) {
       case LABEL_OP: {
@@ -332,7 +337,7 @@ ht* init_builtins() {
   ht_set(inbuilt_hash, "length", &fe_len);
   ht_set(inbuilt_hash, "add", &fe_add);
   ht_set(inbuilt_hash, "sub", &fe_sub);
-  ht_set(inbuilt_hash, "mult", &fe_mult);
+  ht_set(inbuilt_hash, "mul", &fe_mult);
   ht_set(inbuilt_hash, "div", &fe_div);
   ht_set(inbuilt_hash, "mod", &fe_mod);
   ht_set(inbuilt_hash, "lt", &fe_lt);
@@ -352,7 +357,6 @@ Value* fe_set(void** args) {
 }
 
 Value* fe_get(void** args) {
-  printf("hello");
   int value = ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value];
   return create_null_or_int(value);
 }

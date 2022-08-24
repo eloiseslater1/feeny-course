@@ -336,46 +336,46 @@ Entry : #61
 Create empty vector.
 
    drop
-   call #45 0
-   lit #8
-   lit #24
-   lit #0
-   array
-   lit #0
-   object #44
+   call #45 0 | empty
+   lit #8 | 1
+   lit #24 | 1, 4
+   lit #0 | 1, 4, 0
+   array | 1 array
+   lit #0 | 1 array size
+   object #44 | 1 class
    return
-   set local 0
-   drop
-   get local 0
-   call-slot #42 1
-   get local 0
-   slot #21
-   lit #0
-   call-slot #31 2
-   branch #34
-label #34
-   printf #41 0
+   set local 0 | 1 class | class
+   drop | 1 | class
+   get local 0 | 1 class | class
+   call-slot #42 1 | 1 | class
+   get local 0 | 1 class | class
+   slot #21 |  1 size | class
+   lit #0 | 1 size 0
+   call-slot #31 2 | 1 1 | class
+   branch #34 | 1 | class
+label #34 | 1 | class
+   printf #41 0 | 1 null | class
 []
-label #35
+label #35 
    return
-   drop
-   printf #48 0
+   drop | 1 | class
+   printf #48 0 | 1 null | class
 
 
-   drop
-   printf #49 0
+   drop | 1 | class
+   printf #49 0 | 1 null | class
 Add some elements.
 
-   drop
-   get local 0
-   lit #19
-   call-slot #3 2
-   get local 0
-   get local 0
-   slot #21
-   lit #6
-   call-slot #3 2
-   call #22 2
+   drop | 1 | class
+   get local 0 | 1 class | class
+   lit #19 | 1 class 2 | class
+   call-slot #3 2 | 1 | class 2
+   get local 0 | 1 class class | class 2
+   get local 0 | 1 class class | class 2
+   slot #21 | 1 class size | class 2
+   lit #6 | 1 class size(0) 1 | class 2
+   call-slot #3 2 | 1 class 1 | class 2
+   call #22 2 
    get local 0
    slot #15
    call-slot #16 1

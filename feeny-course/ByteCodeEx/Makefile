@@ -1,2 +1,2 @@
 interpreter:
-	gcc src/*.c -o myinterpreter
+	gcc src/*.c -o myinterpreter -g

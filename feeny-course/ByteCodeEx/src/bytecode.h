@@ -162,6 +162,7 @@ typedef struct {
 Program* load_bytecode (char* filename);
 void print_ins (ByteIns* ins);
 void print_prog (Program* p);
+void print_value (Value* v);
 
 #endif
 

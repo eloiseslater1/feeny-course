@@ -224,7 +224,7 @@ Program* load_bytecode (char* filename) {
 //===================== PRINTING =============================
 //============================================================
 
-void print_value (Value* v);
+
 
 void print_value (Value* v) {
   switch(v->tag){
@@ -264,6 +264,15 @@ void print_value (Value* v) {
     for(int i=0; i<v2->slots->size; i++){
       if(i > 0) printf(", ");
       printf("#%d", (int)vector_get(v2->slots,i));
+    }
+    printf(")");
+    break;
+  }
+  case ARRAY_VAL: {
+    ArrayValue* v2 = (ArrayValue*)v;
+    printf("Array(");
+    for (int i = 0; i < v2->len; i++) {
+      ("%d, ", ((IntValue*) v2->value[i])->value);
     }
     printf(")");
     break;
