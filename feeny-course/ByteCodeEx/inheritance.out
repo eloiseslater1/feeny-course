@@ -17,7 +17,7 @@ Constants :
          printf #3 1
          return
    #6: Class(#5)
-   #7: String("base")
+   #7: String("base") ->global
    #8: Method(#7, nargs:0, nlocals:0) :
          lit #0
          object #6
@@ -29,8 +29,8 @@ Constants :
          call-slot #9 2
          return
    #11: Class(#10)
-   #12: String("adder")
-   #13: Method(#12, nargs:0, nlocals:0) :
+   #12: String("adder") ->global
+   #13: Method(#12, nargs:0, nlocals:0) : 
          call #7 0
          object #11
          return
@@ -41,15 +41,15 @@ Constants :
          call-slot #14 2
          return
    #16: Class(#15)
-   #17: String("multiplier")
+   #17: String("multiplier") ->global
    #18: Method(#17, nargs:0, nlocals:0) :
          call #7 0
          object #16
          return
-   #19: String("a")
+   #19: String("a") ->global
    #20: Slot(#19)
-   #21: String("m")
-   #22: Slot(#21)
+   #21: String("m") ->global
+   #22: Slot(#21) 
    #23: Int(11)
    #24: Int(7)
    #25: String("entry39")
@@ -78,76 +78,70 @@ Globals :
    #18
    #20
    #22
-Entry : #26ip is : 0x55588a498580
-      
-   call #12 0ip is : 0x55588a497cc0
-      
-   call #7 0ip is : 0x55588a497970
-      
-   lit #0ip is : 0x55588a497978
-      Null, 
-   object #6ip is : 0x55588a497980
-      Null, Class(#-1974897072, #-1974896464), 
-   returnip is : 0x55588a497cc8
-      Null, Class(#-1974897072, #-1974896464), 
-   object #11ip is : 0x55588a497cd0
-      Null, Class(#-1974897072, #-1974896464), Class(#-1974895888, #-1974895696), 
-   returnip is : 0x55588a498588
-      Null, Class(#-1974897072, #-1974896464), Class(#-1974895888, #-1974895696), 
-   set global #19ip is : 0x55588a498590
-      Null, Class(#-1974897072, #-1974896464), Class(#-1974895888, #-1974895696), 
-   dropip is : 0x55588a498598
-      Null, Class(#-1974897072, #-1974896464), 
-   call #17 0ip is : 0x55588a4980e0
-      Null, Class(#-1974897072, #-1974896464), 
-   call #7 0ip is : 0x55588a497970
-      Null, Class(#-1974897072, #-1974896464), 
-   lit #0ip is : 0x55588a497978
-      Null, Class(#-1974897072, #-1974896464), Null, 
-   object #6ip is : 0x55588a497980
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), 
-   returnip is : 0x55588a4980e8
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), 
-   object #16ip is : 0x55588a4980f0
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), Class(#-1974895184, #-1974894912), 
-   returnip is : 0x55588a4985a0
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), Class(#-1974895184, #-1974894912), 
-   set global #21ip is : 0x55588a4985a8
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), Class(#-1974895184, #-1974894912), 
-   dropip is : 0x55588a4985b0
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), 
-   get global #19ip is : 0x55588a4985b8
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), Class(#-1974895888, #-1974895696), 
-   lit #23ip is : 0x55588a4985c0
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), Class(#-1974895888, #-1974895696), Int(11), 
-   lit #24ip is : 0x55588a4985c8
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), Class(#-1974895888, #-1974895696), Int(11), Int(7), 
-   call-slot #4 3
-tag is 3
-ip is : 0x55588a4985c8
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), 
-   call-slot #4 3
-tag is 3
-ip is : 0x55588a497800
-      Null, 
-   get local 1ip is : 0x55588a497808
-      Null, Null, 
-   get local 2ip is : 0x55588a497810
-      Null, Null, Class(#-1974897072, #-1974896464), 
+Entry : #26      
+   call #12 0      
+   call #7 0      
+   lit #0      Null, 
+   object #6      Null, Class(#-1290377648, #-1290377040) 
+   return      Null, Class(#-1290377648, #-1290377040), 
+   object #11      Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
+   return      Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
+   set global #19      Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
+   drop      Null, Class(#-1290377648, #-1290377040), 
+   call #17 0      Null, Class(#-1290377648, #-1290377040), 
+   call #7 0      Null, Class(#-1290377648, #-1290377040), 
+   lit #0      Null, Class(#-1290377648, #-1290377040), Null, 
+   object #6      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   object #16      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
+   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
+   set global #21      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
+   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get global #19      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
+   lit #23      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), 
+   lit #24      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), Int(7), 
+   call-slot #4 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
+   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
    printf #1 2
-Do a binary operation on 0 and 0.
-ip is : 0x55588a497818
-      Null, Null, 
-   dropip is : 0x55588a497820
-      Null, 
-   get local 0ip is : 0x55588a497828
-      Null, Class(#-1974897072, #-1974896464), 
-   get local 1ip is : 0x55588a497830
-      Null, Class(#-1974897072, #-1974896464), Null, 
-   get local 2ip is : 0x55588a497838
-      Null, Class(#-1974897072, #-1974896464), Null, Class(#-1974897072, #-1974896464), 
-   call-slot #2 3
-tag is 3
-ip is : 0x55588a497838
-      Null, 
-   call-slot #2 3Pop from empty vector.
+Do a binary operation on 11 and 7.
+      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
+   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get local 0      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
+   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), 
+   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), Int(7), 
+   call-slot #2 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
+   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
+   call-slot #9 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(18), 
+   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(18), 
+   printf #3 1
+Result = 18.
+      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
+   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
+   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get global #21      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
+   lit #23      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), 
+   lit #24      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), Int(7), 
+   call-slot #4 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
+   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
+   printf #1 2
+Do a binary operation on 11 and 7.
+      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
+   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get local 0      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
+   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), 
+   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), Int(7), 
+   call-slot #2 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
+   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
+   call-slot #14 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(77), 
+   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(77), 
+   printf #3 1
+Result = 77.
+      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
+   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
+   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
+   lit #0      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
+   return

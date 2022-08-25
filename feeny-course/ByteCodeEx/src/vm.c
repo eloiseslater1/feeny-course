@@ -8,8 +8,8 @@
 void add_globals(ht* hm, Vector* const_pool, Vector* globals);
 void interpret(ht*, int entry_point);
 void run(VM* vm);
-void arthrimetic(char* string, Vector* stack);
 void add_labels(ht* hm, Vector* const_pool);
+void search_class_for_method(VM* vm, ClassValue* class, int method_name);
 Value* fe_set(void** args);
 Value* fe_get(void** args);
 Value* fe_len(void** args);
@@ -87,12 +87,13 @@ void add_globals(ht* hm, Vector* const_pool, Vector* globals) {
 
 void run(VM* vm) {
   while(vm->IP != NULL) {
-    printf("ip is : %p\n", vm->IP);
     ByteIns* ins = (ByteIns*) *vm->IP;
     printf("      ");
-    for (int i = 0; i < vm->stack->size; i++) {
-      print_value(vector_get(vm->stack, i));
-      printf(", ");
+    if (vm->stack->size > 0) {
+      for (int i = 0; i < vm->stack->size; i++) {
+        print_value(vector_get(vm->stack, i));
+        printf(", ");
+      }
     }
     printf("\n");
     switch(ins->tag) {
@@ -142,22 +143,24 @@ void run(VM* vm) {
       case OBJECT_OP: {
         ObjectIns* i = (ObjectIns*)ins;
         printf("   object #%d", i->class);
-        ClassValue* parentClass = (ClassValue* ) vector_get(vm->const_pool, i->class);
-        ClassValue* newClass = malloc(sizeof(ClassValue));
+        ClassValue* class = (ClassValue* ) vector_get(vm->const_pool, i->class);
+        ClassValue* newObject = malloc(sizeof(ClassValue));
         Value* emptyVal = malloc(sizeof(Value));
-        newClass->slots = make_vector();
-        newClass->tag = CLASS_VAL;
-        vector_set_length(newClass->slots, parentClass->slots->size, emptyVal);
-        for (int j = 0; j < parentClass->slots->size; j++) {
-            int pool_idx = (int) vector_get(parentClass->slots, parentClass->slots->size - j - 1);
+        newObject->slots = make_vector();
+        newObject->tag = CLASS_VAL;
+        vector_set_length(newObject->slots, class->slots->size, emptyVal);
+        for (int j = 0; j < class->slots->size; j++) {
+            int pool_idx = (int) vector_get(class->slots, class->slots->size - j - 1);
             Value* slot = (Value* ) vector_get(vm->const_pool, pool_idx);
             if (slot->tag == SLOT_VAL) {
               slot = vector_pop(vm->stack);
             }
-            vector_set(newClass->slots, parentClass->slots->size - j - 1, slot);
+            vector_set(newObject->slots, class->slots->size - j - 1, slot);
         }
-        vector_add(newClass->slots, parentClass);
-        vector_add(vm->stack, newClass);
+        vector_add(newObject->slots, class);
+        print_value(vector_peek(newObject->slots));
+        vector_add(newObject->slots, vector_pop(vm->stack));
+        vector_add(vm->stack, newObject);
         free(emptyVal);
         vm->IP++;
         break;
@@ -165,19 +168,19 @@ void run(VM* vm) {
       case SLOT_OP: {
         SlotIns* i = (SlotIns*)ins;
         printf("   slot #%d", i->name);
-        ClassValue* classVal = (ClassValue*) vector_pop(vm->stack);
-        ClassValue* parentClass = (ClassValue*) vector_peek(classVal->slots);
+        ClassValue* object = (ClassValue*) vector_pop(vm->stack);
+        ClassValue* class = (ClassValue*) vector_get(object->slots, object->slots->size - 2);
         StringValue* name = (StringValue*) vector_get(vm->const_pool, i->name);
         int varIdx;
-        for (int j = 0; j < parentClass->slots->size; j++) {
-          int parIdx = (int) vector_get(parentClass->slots, j);
+        for (int j = 0; j < class->slots->size; j++) {
+          int parIdx = (int) vector_get(class->slots, j);
           SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
           if (parName->name == i->name) {
-            varIdx = j;
-            break;
-          }
+             varIdx = j;
+             break;
+           }
         }
-        vector_add(vm->stack, vector_get(classVal->slots, varIdx));
+        vector_add(vm->stack, vector_get(object->slots, varIdx));
         vm->IP++;
         break;
       }
@@ -185,11 +188,11 @@ void run(VM* vm) {
         SetSlotIns* i = (SetSlotIns*)ins;
         printf("   set-slot #%d", i->name);
         void* valToStore = vector_pop(vm->stack);
-        ClassValue* class = (ClassValue*) vector_pop(vm->stack);
-        ClassValue* parentClass = (ClassValue*) vector_peek(class->slots);
+        ClassValue* object = (ClassValue*) vector_pop(vm->stack);
+        ClassValue* class = (ClassValue*) vector_get(object->slots, object->slots->size - 2);
         int varIdx;
-        for (int j = 0; j < parentClass->slots->size; j++) {
-          int parIdx = (int) vector_get(parentClass->slots, j);
+        for (int j = 0; j < class->slots->size; j++) {
+          int parIdx = (int) vector_get(class->slots, j);
           SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
           if (parName->name == i->name) {
             varIdx = j;
@@ -197,7 +200,7 @@ void run(VM* vm) {
           }
         }
         printf("varIdx is %d\n", varIdx);
-        vector_set(class->slots, varIdx, valToStore);
+        vector_set(object->slots, varIdx, valToStore);
         vector_add(vm->stack, valToStore);
         vm->IP++;
         break;
@@ -220,34 +223,14 @@ void run(VM* vm) {
             break;
           }
           case (CLASS_VAL): {
-            ClassValue* classVal = (ClassValue*) args[0];
+            ClassValue* object = (ClassValue*) args[0];
             Frame* newFrame = make_frame(i->arity, vm->current_frame, vm->IP+1);
             newFrame->variables = args;
             void** current_IP = vm->IP;
-            for (int j = 0; j < classVal->slots->size; j++) {
-              Value* value = (Value*) vector_get(classVal->slots, classVal->slots->size - j - 1); 
-              if (value->tag == METHOD_VAL) {
-                MethodValue* methodVal = (MethodValue* ) value;
-                printf("\nmethodVal is %d\n", methodVal->name);
-                printf("\ni->name is %d\n", i->name);
-                if (methodVal->name == i->name) {
-                  vm->IP = &methodVal->code->array[0];
-                }
-              }
-            }
+            search_class_for_method(vm, object, i->name);
             if (current_IP == vm->IP) {
-              ClassValue* parClass = (ClassValue*) vector_peek(vm->stack);
-              for (int j = 0; j < parClass->slots->size; j++) {
-              Value* value = (Value*) vector_get(parClass->slots, parClass->slots->size - j - 1); 
-              if (value->tag == METHOD_VAL) {
-                MethodValue* methodVal = (MethodValue* ) value;
-                printf("\nmethodVal is %d\n", methodVal->name);
-                printf("\ni->name is %d\n", i->name);
-                if (methodVal->name == i->name) {
-                  vm->IP = &methodVal->code->array[0];
-                }
-              }
-            }
+              ClassValue* parClass = (ClassValue*) vector_peek(object->slots);
+              search_class_for_method(vm, parClass, i->name);
             }
             vm->current_frame = newFrame;
             break;
@@ -344,6 +327,19 @@ void run(VM* vm) {
   free_vm(vm);
 }
 
+//===================== UTILS ================================
+
+void search_class_for_method(VM* vm, ClassValue* class, int method_name) {
+    for (int j = 0; j < class->slots->size; j++) {
+    Value* value = (Value*) vector_get(class->slots, class->slots->size - j - 1); 
+    if (value->tag == METHOD_VAL) {
+      MethodValue* methodVal = (MethodValue* ) value;
+      if (methodVal->name == method_name) {
+        vm->IP = &methodVal->code->array[0];
+      }
+    }
+    }
+}
 
 //===================== BUILTINS ================================
 

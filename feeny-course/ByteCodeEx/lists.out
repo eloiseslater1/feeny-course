@@ -1,0 +1,901 @@
+Interpreting Bytecode Program:
+Constants :
+   #0: Null
+   #1: Int(1)
+   #2: String("nil?")
+   #3: Method(#2, nargs:1, nlocals:0) :
+         lit #1
+         return
+   #4: String("()")
+   #5: String("print")
+   #6: Method(#5, nargs:1, nlocals:0) :
+         printf #4 0
+         return
+   #7: Int(0)
+   #8: String("length")
+   #9: Method(#8, nargs:1, nlocals:0) :
+         lit #7
+         return
+   #10: String("append")
+   #11: Method(#10, nargs:2, nlocals:0) :
+         get local 1
+         return
+   #12: String("reverse")
+   #13: Method(#12, nargs:1, nlocals:0) :
+         get local 0
+         return
+   #14: Class(#3, #6, #9, #11, #13)
+   #15: String("nil")
+   #16: Slot(#15)
+   #17: String("head")
+   #18: Slot(#17)
+   #19: String("tail")
+   #20: Slot(#19)
+   #21: Method(#2, nargs:1, nlocals:0) :
+         lit #7
+         return
+   #22: String("(~")
+   #23: String("test40")
+   #24: String("loop41")
+   #25: String(" ~")
+   #26: String("eq")
+   #27: String(")")
+   #28: Method(#5, nargs:1, nlocals:1) :
+         get local 0
+         slot #17
+         printf #22 1
+         drop
+         get local 0
+         slot #19
+         set local 1
+         drop
+         goto #23
+      label #24
+         get local 1
+         slot #17
+         printf #25 1
+         drop
+         get local 1
+         slot #19
+         set local 1
+         drop
+      label #23
+         get local 1
+         call-slot #2 1
+         lit #7
+         call-slot #26 2
+         branch #24
+         lit #0
+         drop
+         printf #27 0
+         return
+   #29: String("add")
+   #30: Method(#8, nargs:1, nlocals:0) :
+         lit #1
+         get local 0
+         slot #19
+         call-slot #8 1
+         call-slot #29 2
+         return
+   #31: String("cons")
+   #32: Method(#10, nargs:2, nlocals:0) :
+         get local 0
+         slot #17
+         get local 0
+         slot #19
+         get local 1
+         call-slot #10 2
+         call #31 2
+         return
+   #33: Method(#12, nargs:1, nlocals:0) :
+         get local 0
+         slot #19
+         call-slot #12 1
+         get local 0
+         slot #17
+         get global #15
+         call #31 2
+         call-slot #10 2
+         return
+   #34: Class(#18, #20, #21, #28, #30, #32, #33)
+   #35: Method(#31, nargs:2, nlocals:0) :
+         lit #0
+         get local 0
+         get local 1
+         object #34
+         return
+   #36: String("\n")
+   #37: String("nl")
+   #38: Method(#37, nargs:0, nlocals:0) :
+         printf #36 0
+         return
+   #39: String("List A\n")
+   #40: Int(2)
+   #41: Int(3)
+   #42: Int(4)
+   #43: String("List B\n")
+   #44: Int(10)
+   #45: Int(9)
+   #46: Int(8)
+   #47: Int(7)
+   #48: Int(6)
+   #49: Int(5)
+   #50: String("a.length() = ~\n")
+   #51: String("b.length() = ~\n")
+   #52: String("a.append(b) = ")
+   #53: String("a reversed = ")
+   #54: String("b reversed = ")
+   #55: String("main")
+   #56: Method(#55, nargs:0, nlocals:5) :
+         printf #39 0
+         drop
+         lit #1
+         lit #40
+         lit #41
+         lit #42
+         get global #15
+         call #31 2
+         call #31 2
+         call #31 2
+         call #31 2
+         set local 0
+         drop
+         get local 0
+         call-slot #5 1
+         drop
+         call #37 0
+         drop
+         printf #43 0
+         drop
+         lit #44
+         lit #45
+         lit #46
+         lit #47
+         lit #48
+         lit #49
+         get global #15
+         call #31 2
+         call #31 2
+         call #31 2
+         call #31 2
+         call #31 2
+         call #31 2
+         set local 1
+         drop
+         get local 1
+         call-slot #5 1
+         drop
+         call #37 0
+         drop
+         get local 0
+         call-slot #8 1
+         printf #50 1
+         drop
+         get local 1
+         call-slot #8 1
+         printf #51 1
+         drop
+         get local 0
+         get local 1
+         call-slot #10 2
+         set local 2
+         drop
+         printf #52 0
+         drop
+         get local 2
+         call-slot #5 1
+         drop
+         call #37 0
+         drop
+         get local 0
+         call-slot #12 1
+         set local 3
+         drop
+         get local 1
+         call-slot #12 1
+         set local 4
+         drop
+         printf #53 0
+         drop
+         get local 3
+         call-slot #5 1
+         drop
+         call #37 0
+         drop
+         printf #54 0
+         drop
+         get local 4
+         call-slot #5 1
+         drop
+         call #37 0
+         return
+   #57: String("entry42")
+   #58: Method(#57, nargs:0, nlocals:0) :
+         lit #0
+         object #14
+         set global #15
+         drop
+         call #55 0
+         drop
+         lit #0
+         return
+Globals :
+   #16
+   #35
+   #38
+   #56
+Entry : #58      
+   lit #0      Null, 
+   object #14      Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   set global #15      Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   drop      Null, 
+   call #55 0method tag: 55
+      Null, 
+   printf #39 0
+List A
+      Null, Null, 
+   drop      Null, 
+   lit #1      Null, Int(1), 
+   lit #40      Null, Int(1), Int(2), 
+   lit #41      Null, Int(1), Int(2), Int(3), 
+   lit #42      Null, Int(1), Int(2), Int(3), Int(4), 
+   get global #15      Null, Int(1), Int(2), Int(3), Int(4), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(4), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(4), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 0      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #5 1      Null, Int(1), Int(2), Int(3), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Null, 
+   printf #22 1
+(0       Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   goto #23      Null, Int(1), Int(2), Int(3), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(4), 
+   printf #25 1
+ 4       Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(1), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(1), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(1), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Null, 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   printf #27 0
+)      Null, Int(1), Int(2), Int(3), Null, Null, 
+   return      Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   call #37 0method tag: 37
+      Null, Int(1), Int(2), Int(3), Null, 
+   printf #36 0
+
+      Null, Int(1), Int(2), Int(3), Null, Null, 
+   return      Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   printf #43 0
+List B
+      Null, Int(1), Int(2), Int(3), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, 
+   lit #44      Null, Int(1), Int(2), Int(3), Null, Int(10), 
+   lit #45      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), 
+   lit #46      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), 
+   lit #47      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), 
+   lit #48      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), 
+   lit #49      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Int(5), 
+   get global #15      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Int(5), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(5), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(5), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #5 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   printf #22 1
+(0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   goto #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(5), 
+   printf #25 1
+ 5       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   printf #27 0
+)      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   call #37 0method tag: 37
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   printf #36 0
+
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(0), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(2), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(2), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(3), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(3), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(4), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(4), 
+   printf #50 1
+a.length() = 4
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call-slot #8 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), Int(0), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(1), Int(1), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(2), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(1), Int(2), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(3), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(1), Int(3), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(4), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(1), Int(4), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(5), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(1), Int(5), 
+   call-slot #29 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(6), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Int(6), 
+   printf #51 1
+b.length() = 6
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #10 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #10 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #10 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #10 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Int(4), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Int(4), Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Int(4), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Int(4), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #10 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Int(4), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Int(4), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Int(4), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(4), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(4), Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421056, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421056, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421056, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421056, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   printf #52 0
+a.append(b) =       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421056, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #5 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421056, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #22 1
+(0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421056, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   goto #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421264, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325421472, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(4), 
+   printf #25 1
+ 4       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325425712, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325425920, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426128, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   printf #25 1
+ 0       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325426672, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(0), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(5), 
+   printf #25 1
+ 5       Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325436784, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   set local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+label #23      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call-slot #2 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), 
+   lit #7      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Int(1), Int(0), 
+   call-slot #26 2      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   branch #24      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   printf #27 0
+)      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   call #37 0method tag: 37
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   printf #36 0
+
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Null, 
+   drop      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #12 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325428336, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #12 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325428544, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #12 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443808, #-1325428752, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #12 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #19      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call-slot #12 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   slot #17      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Int(4), 
+   get global #15      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Int(4), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   call #31 2method tag: 31
+      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   lit #0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Null, 
+   get local 0      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Null, Int(4), 
+   get local 1      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Null, Int(4), Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), 
+   object #34      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   return      Null, Int(1), Int(2), Int(3), Null, Int(10), Int(9), Int(8), Int(7), Int(6), Null, Null, Null, Null, Null, Class(#-1325443680, #-1325443344, #-1325442896, #-1325442704, #-1325442432, #-1325442224), Null, Class(#-1325437040, #-1325429104, #-1325441520, #-1325440928, #-1325439552, #-1325439232, #-1325438304, #-1325437872), 
+   call-slot #10 2Unknown value

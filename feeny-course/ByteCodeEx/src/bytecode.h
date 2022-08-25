@@ -15,7 +15,8 @@ typedef enum {
   METHOD_VAL,
   SLOT_VAL,
   CLASS_VAL,
-  ARRAY_VAL
+  ARRAY_VAL,
+  OBJECT_VAL
 } ValTag;
 
 typedef enum {
