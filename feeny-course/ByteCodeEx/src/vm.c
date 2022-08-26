@@ -65,16 +65,23 @@ VM* init_vm(Program* p) {
 
 void free_vm(VM* vm) {
   ht_destroy(vm->hm);
+  ht_destroy(vm->inbuilt);
+  ht_destroy(vm->labels);
   destroy_frame(vm->current_frame);
   vector_free(vm->stack);
+  vector_free(vm->const_pool);
+  free(vm->IP);
   free(vm);
 }
 
 void interpret_bc (Program* p) {
-  printf("Interpreting Bytecode Program:\n");
-  print_prog(p);
+  #ifdef DEBUG
+    printf("Interpreting Bytecode Program:\n");
+    print_prog(p);
+  #endif
   VM* vm = init_vm(p);
   run(vm);
+  free(vm);
 }
 
 void add_labels(ht* hm, Vector* const_pool) {
@@ -291,11 +298,14 @@ void op_lit(VM* vm, LitIns* i) {
 void run(VM* vm) {
   while(vm->IP != NULL) {
     ByteIns* ins = (ByteIns*) *vm->IP;
+    #ifdef DEBUG
+      printf("\n");
+    #endif
     switch(ins->tag) {
       case LABEL_OP: {
         LabelIns* i = (LabelIns*)ins;
         #ifdef DEBUG
-        //printf("label #%d", i->name);
+          printf("label #%d", i->name);
         #endif
         vm->IP++;
         break;
@@ -431,7 +441,6 @@ void run(VM* vm) {
       }
     }
   }
-  free_vm(vm);
 }
 
 //===================== UTILS ================================

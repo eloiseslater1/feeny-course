@@ -5,6 +5,7 @@
 #include "bytecode.h"
 #include "vm.h"
 
+
 int main (int argc, char** argvs) {
   //Check number of arguments
   if(argc != 2){
