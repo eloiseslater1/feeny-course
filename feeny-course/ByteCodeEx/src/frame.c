@@ -13,5 +13,4 @@ Frame* make_frame(int size, Frame* current_frame, void** return_address) {
 void destroy_frame(Frame* frame) {
     free(frame->variables);
     free(frame);
-    free(frame->return_address);
 }
