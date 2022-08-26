@@ -250,7 +250,6 @@ void op_object(VM* vm, ObjectIns* i) {
       vector_set(newObject->slots, class->slots->size - j - 1, slot);
   }
   vector_add(newObject->slots, class);
-  print_value(vector_peek(newObject->slots));
   vector_add(newObject->slots, vector_pop(vm->stack));
   vector_add(vm->stack, newObject);
   free(emptyVal);
