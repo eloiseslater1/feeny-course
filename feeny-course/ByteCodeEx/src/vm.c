@@ -9,7 +9,10 @@ void add_globals(ht* hm, Vector* const_pool, Vector* globals);
 void interpret(ht*, int entry_point);
 void run(VM* vm);
 void add_labels(ht* hm, Vector* const_pool);
-void search_class_for_method(VM* vm, ClassValue* class, int method_name);
+
+void op_return(VM* vm);
+
+MethodValue* search_class_for_method(VM* vm, ClassValue* class, int method_name);
 Value* fe_set(void** args);
 Value* fe_get(void** args);
 Value* fe_len(void** args);
@@ -85,17 +88,30 @@ void add_globals(ht* hm, Vector* const_pool, Vector* globals) {
   }
 }
 
+void op_return(VM* vm) {
+  printf("   return");
+  if (vm->current_frame->parent != NULL) {
+    //Frame* old_frame = vm->current_frame;
+    vm->IP = vm->current_frame->return_address;
+    vm->current_frame = vm->current_frame->parent;
+    //destroy_frame(old_frame);
+  } else {
+    exit(1);
+  }
+}
+
 void run(VM* vm) {
   while(vm->IP != NULL) {
     ByteIns* ins = (ByteIns*) *vm->IP;
-    printf("      ");
-    if (vm->stack->size > 0) {
-      for (int i = 0; i < vm->stack->size; i++) {
-        print_value(vector_get(vm->stack, i));
-        printf(", ");
-      }
-    }
     printf("\n");
+    printf("return ip: %p and vm->IP: %p", vm->current_frame->return_address, vm->IP);
+    // if (vm->stack->size > 0) {
+    //   for (int i = 0; i < vm->stack->size; i++) {
+    //     print_value(vector_get(vm->stack, i));
+    //     printf(", ");
+    //   }
+    // }
+    printf("      ");
     switch(ins->tag) {
       case LABEL_OP: {
         LabelIns* i = (LabelIns*)ins;
@@ -224,15 +240,11 @@ void run(VM* vm) {
           }
           case (CLASS_VAL): {
             ClassValue* object = (ClassValue*) args[0];
-            Frame* newFrame = make_frame(i->arity, vm->current_frame, vm->IP+1);
+            MethodValue* method = search_class_for_method(vm, object, i->name);
+            Frame* newFrame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
             newFrame->variables = args;
-            void** current_IP = vm->IP;
-            search_class_for_method(vm, object, i->name);
-            if (current_IP == vm->IP) {
-              ClassValue* parClass = (ClassValue*) vector_peek(object->slots);
-              search_class_for_method(vm, parClass, i->name);
-            }
             vm->current_frame = newFrame;
+            vm->IP = &method->code->array[0];
             break;
           }
           default:
@@ -303,13 +315,7 @@ void run(VM* vm) {
         break;
       }
       case RETURN_OP: {
-        printf("   return");
-        if (vm->current_frame->parent != NULL) {
-          vm->IP = vm->current_frame->return_address;
-          vm->current_frame = vm->current_frame->parent;
-        } else {
-          exit(1);
-        }
+        op_return(vm);
         break;
       }
       case DROP_OP: {
@@ -329,16 +335,18 @@ void run(VM* vm) {
 
 //===================== UTILS ================================
 
-void search_class_for_method(VM* vm, ClassValue* class, int method_name) {
+MethodValue* search_class_for_method(VM* vm, ClassValue* class, int method_name) {
     for (int j = 0; j < class->slots->size; j++) {
-    Value* value = (Value*) vector_get(class->slots, class->slots->size - j - 1); 
-    if (value->tag == METHOD_VAL) {
-      MethodValue* methodVal = (MethodValue* ) value;
-      if (methodVal->name == method_name) {
-        vm->IP = &methodVal->code->array[0];
+      Value* value = (Value*) vector_get(class->slots, class->slots->size - j - 1); 
+      if (value->tag == METHOD_VAL) {
+        MethodValue* methodVal = (MethodValue* ) value;
+        if (methodVal->name == method_name) {
+          return methodVal;
+          //vm->IP = &methodVal->code->array[0];
+        }
       }
     }
-    }
+    search_class_for_method(vm, (ClassValue*) vector_peek(class->slots), method_name);
 }
 
 //===================== BUILTINS ================================
