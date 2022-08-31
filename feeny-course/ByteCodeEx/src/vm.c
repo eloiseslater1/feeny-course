@@ -60,6 +60,7 @@ VM* init_vm(Program* p) {
                                   NULL, 
                                   vm->IP);
   vm->const_pool = p->values;
+  print_prog(p);
   return vm;
 }
 

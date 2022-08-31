@@ -6,8 +6,6 @@
 #include<string.h>
 #include "utils.h"
 
-
-
 typedef enum {
   INT_VAL,
   NULL_VAL,
