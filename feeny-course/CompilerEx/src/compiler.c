@@ -41,6 +41,13 @@ LitIns* make_lit(int idx) {
   return i;
 }
 
+GetLocalIns* make_get_local(int idx) {
+  GetLocalIns* i = malloc(sizeof(GetLocalIns));
+  i->tag = GET_LOCAL_OP;
+  i->idx = idx;
+  return i;
+}
+
 MethodValue* make_methodv(int name, int nargs, int nlocals) {
   MethodValue* method = malloc(sizeof(MethodValue));
   method->tag = METHOD_VAL;
@@ -51,19 +58,31 @@ MethodValue* make_methodv(int name, int nargs, int nlocals) {
   return method;
 }
 
+int int_to_idx(int i, Compiler* compiler) {
+  char int_char = '0' + i; 
+  void* idx = ht_get(compiler->int_idx, &int_char);
+  if (!idx) {
+    vector_add(compiler->programe->values, make_int(i));
+    idx = compiler->programe->values->size;
+    ht_set(compiler->int_idx, &int_char, (void*) idx);
+  } else {
+    idx = (int) idx;
+  }
+  return idx - 1;
+}
+
 int str_to_idx(char* str, Compiler* compiler) {
-  int idx;
-  void* i = ht_get(compiler->strings_idx, str); 
-  if (!i) {
-    if (strcmp(str, "NULL") == 0)  {
-      vector_add(compiler->programe->values, make_value(NULL_VAL)); 
-    } else {
+  void* idx = ht_get(compiler->strings_idx, str);
+  if (!idx) {
+    if (str != "NULL") {
       vector_add(compiler->programe->values, make_string(str));
-      }
+    } else {
+      vector_add(compiler->programe->values, make_value(NULL_VAL)); 
+    }
     idx = compiler->programe->values->size; 
     ht_set(compiler->strings_idx, str, (void*) idx);
   } else {
-    idx = (int) i;
+    idx = (int) idx;
   }
   return idx - 1;
 }
@@ -91,6 +110,7 @@ Program* compile (ScopeStmt* stmt) {
 Compiler* init_compiler() {
   Compiler* compiler = malloc(sizeof(Compiler));
   compiler->strings_idx = ht_create();
+  compiler->int_idx = ht_create();
   compiler->global_scope = make_methodv(0, 0, 0);
   compiler->local_scope = NULL;
   compiler->programe = init_programe();
@@ -100,6 +120,7 @@ Compiler* init_compiler() {
 void free_compiler(Compiler* compiler) {
   destroy_programe(compiler->programe);
   ht_destroy(compiler->strings_idx);
+  ht_destroy(compiler->int_idx);
   free(compiler);
 }
 
@@ -136,6 +157,11 @@ void parse_scope(Compiler* compiler, ScopeStmt* s) {
     int name = str_to_idx(s2->name, compiler);
     MethodValue* method = make_methodv(name, s2->nargs, 0);
     compiler->local_scope = method;
+
+    for (int i = 0; i < s2->nargs; i++) {
+      add_ins(compiler, (ByteIns*) make_get_local(i));
+    }
+
     parse_scope(compiler, s2->body);
     add_ins(compiler, make_ins(RETURN_OP));
     compiler->local_scope = NULL;
@@ -168,7 +194,7 @@ void add_exp(Exp* e, Compiler* compiler) {
   switch(e->tag){
   case INT_EXP:{
     IntExp* e2 = (IntExp*)e;
-    printf("%d", e2->value);
+    add_ins(compiler, (ByteIns*) make_lit(int_to_idx(e2->value, compiler)));
     break;
   }
   case NULL_EXP:{
@@ -230,6 +256,9 @@ void add_exp(Exp* e, Compiler* compiler) {
   }
   case CALL_EXP:{
     CallExp* e2 = (CallExp*)e;
+    for (int i = 0; i < e2->nargs; i++) {
+      add_exp(e2->args[i], compiler);
+    }
     CallIns* call_ins = malloc(sizeof(CallIns));
     call_ins->tag = CALL_OP;
     call_ins->name = str_to_idx(e2->name, compiler); 

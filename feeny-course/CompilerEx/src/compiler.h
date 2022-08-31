@@ -8,6 +8,7 @@
 typedef struct {
     Program* programe;
     ht* strings_idx;
+    ht* int_idx;
     MethodValue* global_scope;
     MethodValue* local_scope;
 } Compiler;
