@@ -48,6 +48,25 @@ GetLocalIns* make_get_local(int idx) {
   return i;
 }
 
+GetGlobalIns* make_get_global(int name) {
+  GetGlobalIns* i = malloc(sizeof(GetGlobalIns));
+  i->tag = GET_LOCAL_OP;
+  i->name = name;
+  return i;
+}
+
+SetLocalIns* make_set_local(int idx) {
+  SetLocalIns* i = malloc(sizeof(SetLocalIns));
+  i->tag = SET_LOCAL_OP;
+  i->idx = idx;
+}
+
+SetGlobalIns* make_set_global(int name) {
+  SetGlobalIns* i = malloc(sizeof(SetGlobalIns));
+  i->tag = SET_GLOBAL_OP;
+  i->name = name;
+}
+
 MethodValue* make_methodv(int name, int nargs, int nlocals) {
   MethodValue* method = malloc(sizeof(MethodValue));
   method->tag = METHOD_VAL;
@@ -60,31 +79,27 @@ MethodValue* make_methodv(int name, int nargs, int nlocals) {
 
 int int_to_idx(int i, Compiler* compiler) {
   char int_char = '0' + i; 
-  void* idx = ht_get(compiler->int_idx, &int_char);
+  IntValue* idx = (IntValue*) ht_get(compiler->int_idx, &int_char);
   if (!idx) {
     vector_add(compiler->programe->values, make_int(i));
-    idx = compiler->programe->values->size;
-    ht_set(compiler->int_idx, &int_char, (void*) idx);
-  } else {
-    idx = (int) idx;
-  }
-  return idx - 1;
+    idx = make_int(compiler->programe->values->size - 1);
+    ht_set(compiler->int_idx, &int_char, idx);
+  } 
+  return idx->value;
 }
 
 int str_to_idx(char* str, Compiler* compiler) {
-  void* idx = ht_get(compiler->strings_idx, str);
+  IntValue* idx = (IntValue*) ht_get(compiler->strings_idx, str);
   if (!idx) {
     if (str != "NULL") {
       vector_add(compiler->programe->values, make_string(str));
     } else {
       vector_add(compiler->programe->values, make_value(NULL_VAL)); 
     }
-    idx = compiler->programe->values->size; 
-    ht_set(compiler->strings_idx, str, (void*) idx);
-  } else {
-    idx = (int) idx;
+    idx = make_int(compiler->programe->values->size - 1); 
+    ht_set(compiler->strings_idx, str, idx);
   }
-  return idx - 1;
+  return idx->value;
 }
 
 //----------------------------------------------------------
@@ -98,8 +113,8 @@ Program* compile (ScopeStmt* stmt) {
   Compiler* compiler = init_compiler();
   parse_scope(compiler, stmt);
 
-  compiler->global_scope->name = str_to_idx("entry123", compiler);
-  vector_add(compiler->programe->values, compiler->global_scope);
+  compiler->global_frame->name = str_to_idx("entry123", compiler);
+  vector_add(compiler->programe->values, compiler->global_frame);
   compiler->programe->entry = compiler->programe->values->size - 1;
   add_ins(compiler, make_ins(DROP_OP));
   add_ins(compiler, (ByteIns*) make_lit(str_to_idx("NULL", compiler)));
@@ -111,9 +126,11 @@ Compiler* init_compiler() {
   Compiler* compiler = malloc(sizeof(Compiler));
   compiler->strings_idx = ht_create();
   compiler->int_idx = ht_create();
-  compiler->global_scope = make_methodv(0, 0, 0);
-  compiler->local_scope = NULL;
+  compiler->global_frame = make_methodv(0, 0, 0);
+  compiler->local_frame = NULL;
+  compiler->local_scope = ht_create();
   compiler->programe = init_programe();
+  compiler->global_scope = ht_create();
   return compiler;
 }
 
@@ -121,6 +138,8 @@ void free_compiler(Compiler* compiler) {
   destroy_programe(compiler->programe);
   ht_destroy(compiler->strings_idx);
   ht_destroy(compiler->int_idx);
+  ht_destroy(compiler->local_scope);
+  ht_destroy(compiler->local_scope);
   free(compiler);
 }
 
@@ -137,34 +156,50 @@ ByteIns* make_ins(int tag) {
 }
 
 void add_ins(Compiler* compiler, ByteIns* ins) {
-  if (compiler->local_scope) {
-    vector_add(compiler->local_scope->code, ins);
+  if (compiler->local_frame) {
+    vector_add(compiler->local_frame->code, ins);
   } else {
-    vector_add(compiler->global_scope->code, ins);
+    vector_add(compiler->global_frame->code, ins);
   }
 }
 
 void parse_scope(Compiler* compiler, ScopeStmt* s) {
   switch(s->tag){
   case VAR_STMT:{
+    // have a global var statemrnt, this only does local
     ScopeVar* s2 = (ScopeVar*)s;
+    printf("called");
     printf("var %s = ", s2->name);
-    print_exp(s2->exp);
+    add_exp(s2->exp, compiler);
+    IntValue* local = (IntValue*) ht_get(compiler->local_scope, s2->name);
+    if (compiler->local_frame) {
+      local = make_int(compiler->local_frame->nargs + compiler->local_frame->nlocals); 
+      ht_set(compiler->local_scope, s2->name, local);
+      compiler->local_frame->nlocals++;
+      add_ins(compiler, (ByteIns*) make_set_local(local->value));
+    } else {
+      IntValue* global = make_int(compiler->programe->values->size);
+      ht_set(compiler->global_scope, s2->name, global);
+      add_ins(compiler, (ByteIns*) make_set_global(global->value));
+    }
     break;
   }
   case FN_STMT:{
     ScopeFn* s2 = (ScopeFn*)s;
     int name = str_to_idx(s2->name, compiler);
     MethodValue* method = make_methodv(name, s2->nargs, 0);
-    compiler->local_scope = method;
+    compiler->local_frame = method;
+    compiler->local_scope = ht_create();
 
     for (int i = 0; i < s2->nargs; i++) {
-      add_ins(compiler, (ByteIns*) make_get_local(i));
+      ht_set(compiler->local_scope, s2->args[i], make_int(i));
     }
 
     parse_scope(compiler, s2->body);
     add_ins(compiler, make_ins(RETURN_OP));
-    compiler->local_scope = NULL;
+    compiler->local_frame = NULL;
+
+    ht_destroy(compiler->local_scope);
     vector_add(compiler->programe->values, method);
     vector_add(compiler->programe->slots, (void*) compiler->programe->values->size - 1);
     break;
@@ -173,7 +208,7 @@ void parse_scope(Compiler* compiler, ScopeStmt* s) {
     ScopeSeq* s2 = (ScopeSeq*)s;
     parse_scope(compiler, s2->a);
     printf(" ");
-    if (s2->a->tag == EXP_STMT && s2->b->tag == EXP_STMT) {
+    if (compiler->local_frame && (s2->a->tag != SEQ_STMT)) {
       add_ins(compiler, make_ins(DROP_OP));
     }
     parse_scope(compiler, s2->b);
@@ -207,6 +242,9 @@ void add_exp(Exp* e, Compiler* compiler) {
     print_ins->format = str_to_idx(e2->format, compiler);
     print_ins->tag = PRINTF_OP;
     print_ins->arity = e2->nexps;
+    for(int i = 0; i < e2->nexps; i++) {
+      add_exp(e2->exps[i], compiler);
+    }
     add_ins(compiler, (ByteIns*) print_ins);
     str_to_idx("NULL", compiler);
     break;
@@ -268,8 +306,14 @@ void add_exp(Exp* e, Compiler* compiler) {
   }
   case SET_EXP:{
     SetExp* e2 = (SetExp*)e;
-    printf("%s = ", e2->name);
-    print_exp(e2->exp);
+    add_exp(e2->exp, compiler);
+    IntValue* local = (IntValue*) ht_get(compiler->local_scope, e2->name);
+    if (local) {
+      add_ins(compiler, (ByteIns*) make_set_local(local->value));
+    } else {
+      IntValue* global = (IntValue*) ht_get(compiler->global_scope, e2->name);
+      add_ins(compiler, (ByteIns*) make_set_global(local->value));
+    }
     break;
   }
   case IF_EXP:{
@@ -295,6 +339,13 @@ void add_exp(Exp* e, Compiler* compiler) {
   case REF_EXP:{
     RefExp* e2 = (RefExp*)e;
     printf("%s", e2->name);
+    IntValue* local = ht_get(compiler->local_scope, e2->name);
+    if (local) {
+      add_ins(compiler, (ByteIns* ) make_get_local(local->value));
+    } else {
+      IntValue* global = ht_get(compiler->local_scope, e2->name);
+      add_ins(compiler, (ByteIns*) make_get_global(global->value));
+    }
     break;
   }
   default:

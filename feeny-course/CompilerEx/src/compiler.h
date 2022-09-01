@@ -9,8 +9,10 @@ typedef struct {
     Program* programe;
     ht* strings_idx;
     ht* int_idx;
-    MethodValue* global_scope;
-    MethodValue* local_scope;
+    MethodValue* global_frame;
+    MethodValue* local_frame;
+    ht* local_scope;
+    ht* global_scope;
 } Compiler;
 
 Program* compile (ScopeStmt* stmt);
