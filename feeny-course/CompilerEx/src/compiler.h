@@ -13,6 +13,7 @@ typedef struct {
     MethodValue* local_frame;
     ht* local_scope;
     ht* global_scope;
+    int label_num;
 } Compiler;
 
 Program* compile (ScopeStmt* stmt);

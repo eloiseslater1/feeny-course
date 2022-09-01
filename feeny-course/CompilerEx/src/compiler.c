@@ -14,6 +14,8 @@ ByteIns* make_ins(int tag);
 //------------------  CONSTANT POOL ------------------------
 //----------------------------------------------------------
 
+
+
 Value* make_value(int tag) {
   Value* value = malloc(sizeof(Value));
   value->tag = tag;
@@ -67,6 +69,24 @@ SetGlobalIns* make_set_global(int name) {
   i->name = name;
 }
 
+BranchIns* make_branch(int name) {
+  BranchIns* i = malloc(sizeof(BranchIns));
+  i->tag = BRANCH_OP;
+  i->name = name;
+}
+
+LabelIns* make_label(int name) {
+  LabelIns* i = malloc(sizeof(LabelIns));
+  i->tag = LABEL_OP;
+  i->name = name;
+}
+
+GotoIns* make_goto(int name) {
+  GotoIns* i = malloc(sizeof(GotoIns));
+  i->tag = GOTO_OP;
+  i->name = name;
+}
+
 MethodValue* make_methodv(int name, int nargs, int nlocals) {
   MethodValue* method = malloc(sizeof(MethodValue));
   method->tag = METHOD_VAL;
@@ -102,6 +122,34 @@ int str_to_idx(char* str, Compiler* compiler) {
   return idx->value;
 }
 
+#define LABEL_START 35
+
+typedef enum {
+  ENTRY_TAG,
+  CONSEQ_TAG,
+  END_TAG,
+} LabelTag;
+
+int add_label(Compiler* compiler, LabelTag tag) {
+  char* label = malloc(sizeof(char) * 10);
+  switch(tag) {
+    case (ENTRY_TAG): {
+      sprintf(label, "entry%2d", LABEL_START);
+      break;
+    }
+    case (CONSEQ_TAG): {
+      sprintf(label, "conseq%2d", LABEL_START+compiler->label_num);
+      break;
+    }
+    case (END_TAG): {
+      sprintf(label, "end%2d", LABEL_START+compiler->label_num);
+      break;
+    }
+  }
+  compiler->label_num++;
+  return str_to_idx(label, compiler);
+}
+
 //----------------------------------------------------------
 //------------------  ENTRY + START-UP ------------------------
 //----------------------------------------------------------
@@ -131,6 +179,7 @@ Compiler* init_compiler() {
   compiler->local_scope = ht_create();
   compiler->programe = init_programe();
   compiler->global_scope = ht_create();
+  compiler->label_num = 0;
   return compiler;
 }
 
@@ -166,10 +215,7 @@ void add_ins(Compiler* compiler, ByteIns* ins) {
 void parse_scope(Compiler* compiler, ScopeStmt* s) {
   switch(s->tag){
   case VAR_STMT:{
-    // have a global var statemrnt, this only does local
     ScopeVar* s2 = (ScopeVar*)s;
-    printf("called");
-    printf("var %s = ", s2->name);
     add_exp(s2->exp, compiler);
     IntValue* local = (IntValue*) ht_get(compiler->local_scope, s2->name);
     if (compiler->local_frame) {
@@ -233,7 +279,7 @@ void add_exp(Exp* e, Compiler* compiler) {
     break;
   }
   case NULL_EXP:{
-    printf("null");
+    add_ins(compiler, (ByteIns*) make_lit(str_to_idx("NULL", compiler)));
     break;
   }
   case PRINTF_EXP:{
@@ -318,13 +364,15 @@ void add_exp(Exp* e, Compiler* compiler) {
   }
   case IF_EXP:{
     IfExp* e2 = (IfExp*)e;
-    printf("if ");
-    print_exp(e2->pred);
-    printf(" : (");
-    print_scopestmt(e2->conseq);
-    printf(") else : (");
-    print_scopestmt(e2->alt);
-    printf(")");
+    int conseq = add_label(compiler, CONSEQ_TAG);
+    int end = add_label(compiler, END_TAG);
+    add_exp(e2->pred, compiler);
+    add_ins(compiler, (ByteIns*) make_branch(conseq));
+    parse_scope(compiler, e2->alt);
+    add_ins(compiler, (ByteIns*) make_goto(end));
+    add_ins(compiler, (ByteIns*) make_label(conseq));
+    parse_scope(compiler, e2->conseq);
+    add_ins(compiler, (ByteIns*) make_label(end));
     break;
   }
   case WHILE_EXP:{
