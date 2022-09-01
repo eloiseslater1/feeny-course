@@ -87,6 +87,13 @@ GotoIns* make_goto(int name) {
   i->name = name;
 }
 
+CallSlotIns* make_call_slot(int name, int arity) {
+  CallSlotIns* i = malloc(sizeof(CallSlotIns));
+  i->name = name;
+  i->arity = arity;
+  i->tag = CALL_SLOT_OP;
+}
+
 MethodValue* make_methodv(int name, int nargs, int nlocals) {
   MethodValue* method = malloc(sizeof(MethodValue));
   method->tag = METHOD_VAL;
@@ -98,12 +105,13 @@ MethodValue* make_methodv(int name, int nargs, int nlocals) {
 }
 
 int int_to_idx(int i, Compiler* compiler) {
-  char int_char = '0' + i; 
-  IntValue* idx = (IntValue*) ht_get(compiler->int_idx, &int_char);
+  char int_char[11];
+  sprintf(int_char,"%d", i);
+  IntValue* idx = (IntValue*) ht_get(compiler->int_idx, int_char);
   if (!idx) {
     vector_add(compiler->programe->values, make_int(i));
     idx = make_int(compiler->programe->values->size - 1);
-    ht_set(compiler->int_idx, &int_char, idx);
+    ht_set(compiler->int_idx, int_char, idx);
   } 
   return idx->value;
 }
@@ -128,6 +136,8 @@ typedef enum {
   ENTRY_TAG,
   CONSEQ_TAG,
   END_TAG,
+  TEST_TAG,
+  LOOP_TAG
 } LabelTag;
 
 int add_label(Compiler* compiler, LabelTag tag) {
@@ -143,6 +153,14 @@ int add_label(Compiler* compiler, LabelTag tag) {
     }
     case (END_TAG): {
       sprintf(label, "end%2d", LABEL_START+compiler->label_num);
+      break;
+    }
+    case (TEST_TAG): {
+      sprintf(label, "test%2d", LABEL_START+compiler->label_num);
+      break;
+    }
+    case (LOOP_TAG): {
+      sprintf(label, "loop%2d", LABEL_START+compiler->label_num);
       break;
     }
   }
@@ -161,7 +179,7 @@ Program* compile (ScopeStmt* stmt) {
   Compiler* compiler = init_compiler();
   parse_scope(compiler, stmt);
 
-  compiler->global_frame->name = str_to_idx("entry123", compiler);
+  compiler->global_frame->name = add_label(compiler, ENTRY_TAG);
   vector_add(compiler->programe->values, compiler->global_frame);
   compiler->programe->entry = compiler->programe->values->size - 1;
   add_ins(compiler, make_ins(DROP_OP));
@@ -329,13 +347,12 @@ void add_exp(Exp* e, Compiler* compiler) {
   }
   case CALL_SLOT_EXP:{
     CallSlotExp* e2 = (CallSlotExp*)e;
-    print_exp(e2->exp);
-    printf(".%s(", e2->name);
+    add_exp(e2->exp, compiler);
     for(int i=0; i<e2->nargs; i++){
-      if(i > 0) printf(", ");
-      print_exp(e2->args[i]);
+      add_exp(e2->args[i], compiler);
     }
-    printf(")");
+    int idx = str_to_idx(e2->name, compiler);
+    add_ins(compiler, (ByteIns*) make_call_slot(idx, e2->nargs + 1));
     break;
   }
   case CALL_EXP:{
@@ -377,11 +394,16 @@ void add_exp(Exp* e, Compiler* compiler) {
   }
   case WHILE_EXP:{
     WhileExp* e2 = (WhileExp*)e;
-    printf("while ");
-    print_exp(e2->pred);
-    printf(" : (");
-    print_scopestmt(e2->body);
-    printf(")");
+    int test = add_label(compiler, TEST_TAG);
+    int loop = add_label(compiler, LOOP_TAG);
+    add_ins(compiler, (ByteIns*) make_goto(test));
+    add_ins(compiler, (ByteIns*) make_label(loop));
+    parse_scope(compiler, e2->body);
+    add_ins(compiler, make_ins(DROP_OP));
+    add_ins(compiler, (ByteIns*) make_label(test));
+    add_exp(e2->pred, compiler);
+    add_ins(compiler, (ByteIns*) make_branch(loop));
+    add_ins(compiler, (ByteIns*) make_lit(str_to_idx("NULL", compiler)));
     break;
   }
   case REF_EXP:{
