@@ -399,12 +399,12 @@ void add_exp(Exp* e, Compiler* compiler) {
   case OBJECT_EXP:{
     ObjectExp* e2 = (ObjectExp*)e;
     ClassValue* class = make_classv();
-
+    add_exp(e2->parent, compiler);
     for(int i=0; i<e2->nslots; i++){
       parse_slots(compiler, class, e2->slots[i]);
     }
-    //vector_add(compiler->programe->values, class);
-    //add_ins(compiler, (ByteIns*) make_object(compiler->programe->values->size - 1));
+    vector_add(compiler->programe->values, class);
+    add_ins(compiler, (ByteIns*) make_object(compiler->programe->values->size - 1));
     break;
   }
   case SLOT_EXP:{
@@ -488,7 +488,6 @@ void add_exp(Exp* e, Compiler* compiler) {
     if (compiler->local_frame) {
       IntValue* local = ht_get(compiler->local_scope, e2->name);
       if (local) {
-        //printf("setting local: %s\n");
         add_ins(compiler, (ByteIns*) make_get_local(local->value));
         return;
       }
