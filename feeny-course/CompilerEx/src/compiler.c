@@ -272,7 +272,6 @@ void parse_slots(Compiler* compiler, ClassValue* class, SlotStmt* s) {
     case (FN_STMT): {
       SlotMethod* s2 = (SlotMethod*) s;
       int name = str_to_idx(s2->name, compiler);
-      //printf("statment tag is: %d\n", s2->name);
       MethodValue* method = make_methodv(name, s2->nargs+1, 0);
       MethodValue* current_local_frame = compiler->local_frame;
       ht* current_local_scope = compiler->local_scope;

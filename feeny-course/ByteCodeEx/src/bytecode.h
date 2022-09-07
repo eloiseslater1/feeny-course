@@ -53,8 +53,8 @@ typedef struct {
 
 typedef struct {
   ValTag tag;
-  int* value;
   int len;
+  int* value;
 } ArrayValue;
 
 typedef struct {

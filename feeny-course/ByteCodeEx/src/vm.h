@@ -21,4 +21,10 @@ typedef struct {
 void interpret_bc (Program* prog);
 VM* init_vm(Program* p);
 
+typedef struct {
+    int tag;
+    void* parent;
+    void* slots[];
+} VMObj;
+
 #endif

@@ -27,7 +27,7 @@ void op_array(VM* vm);
 void op_print(VM* vm, PrintfIns* i);
 void op_lit(VM* vm, LitIns* i);
 
-MethodValue* search_class_for_method(VM* vm, ClassValue* class, int method_name);
+MethodValue* search_class_for_method(VM* vm, VMObj* class, int method_name);
 Value* fe_set(void** args);
 Value* fe_get(void** args);
 Value* fe_len(void** args);
@@ -168,12 +168,13 @@ void op_call(VM* vm, CallIns* i) {
   MethodValue* method = (MethodValue*) ht_get(vm->hm, ((StringValue*) vector_get(vm->const_pool, i->name))->value);
   vm->current_frame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
   for (int j = 0; j < i->arity; j++) {
+    //printf("adding to index: %i tag: %i", i, ((Value*) vector_get(vm->stack)))
     vm->current_frame->variables[i->arity - j - 1] = vector_pop(vm->stack);
   }
   vm->IP = &method->code->array[0];
 } 
 
-void op_call_slot(VM* vm, CallSlotIns* i) {
+void op_call_slot2(VM* vm, CallSlotIns* i) {
   char* method_name = ((StringValue*) vector_get(vm->const_pool, i->name))->value;
   void** args = malloc(sizeof(void*) * i->arity);
   for (int j = 0; j < i->arity; j++) {
@@ -189,8 +190,8 @@ void op_call_slot(VM* vm, CallSlotIns* i) {
       free(args);
       break;
     }
-    case (CLASS_VAL): {
-      ClassValue* object = (ClassValue*) args[0];
+    default: {
+      VMObj* object = args[0];
       MethodValue* method = search_class_for_method(vm, object, i->name);
       Frame* newFrame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
       for (int j = 0; j < i->arity; j++) {
@@ -201,16 +202,47 @@ void op_call_slot(VM* vm, CallSlotIns* i) {
       free(args);
       break;
     }
-    default:
-      printf("Unknown value");
-      exit(-1);
   }
 }
 
-void op_set_slot(VM* vm, SetSlotIns* i) {
+// void op_call_slot(VM* vm, CallSlotIns* i) {
+//   char* method_name = ((StringValue*) vector_get(vm->const_pool, i->name))->value;
+//   void** args = malloc(sizeof(void*) * i->arity);
+//   for (int j = 0; j < i->arity; j++) {
+//       args[i->arity - j - 1] = vector_pop(vm->stack);
+//   }
+//   switch (((Value*)args[0])->tag) {
+//     case (ARRAY_VAL):
+//     case (INT_VAL): {
+//       Value* (*func)(void**) = ht_get(vm->inbuilt, method_name);
+//       Value* return_value = (*func)(args); 
+//       vector_add(vm->stack, (void*) return_value);
+//       vm->IP++;
+//       free(args);
+//       break;
+//     }
+//     case (CLASS_VAL): {
+//       ClassValue* object = (ClassValue*) args[0];
+//       MethodValue* method = search_class_for_method(vm, object, i->name);
+//       Frame* newFrame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
+//       for (int j = 0; j < i->arity; j++) {
+//         newFrame->variables[j] = args[j];
+//       }
+//       vm->current_frame = newFrame;
+//       vm->IP = &method->code->array[0];
+//       free(args);
+//       break;
+//     }
+//     default:
+//       printf("Unknown value");
+//       exit(-1);
+//   }
+// }
+
+void op_set_slot2(VM* vm, SetSlotIns* i) {
   void* valToStore = vector_pop(vm->stack);
-  ClassValue* object = (ClassValue*) vector_pop(vm->stack);
-  ClassValue* class = (ClassValue*) vector_get(object->slots, object->slots->size - 2);
+  VMObj* object = vector_pop(vm->stack);
+  ClassValue* class = (ClassValue*) vector_get(vm->const_pool, object->tag);
   int varIdx;
   for (int j = 0; j < class->slots->size; j++) {
     int parIdx = (int) vector_get(class->slots, j);
@@ -220,8 +252,25 @@ void op_set_slot(VM* vm, SetSlotIns* i) {
       break;
     }
   }
-  vector_set(object->slots, varIdx, valToStore);
+  object->slots[varIdx] = valToStore;
   vector_add(vm->stack, valToStore);
+  vm->IP++;
+}
+
+void op_slot2(VM* vm, SlotIns* i) {
+  VMObj* object = vector_pop(vm->stack);
+  ClassValue* class = vector_get(vm->const_pool, object->tag);
+  StringValue* name = (StringValue*) vector_get(vm->const_pool, i->name);
+  int varIdx;
+  for (int j = 0; j < class->slots->size; j++) {
+    int parIdx = (int) vector_get(class->slots, j);
+    SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
+    if (parName->name == i->name) {
+        varIdx = j;
+        break;
+      }
+  }
+  vector_add(vm->stack, object->slots[varIdx]);
   vm->IP++;
 }
 
@@ -239,6 +288,29 @@ void op_slot(VM* vm, SlotIns* i) {
       }
   }
   vector_add(vm->stack, vector_get(object->slots, varIdx));
+  vm->IP++;
+}
+
+void op_object2(VM* vm, ObjectIns* ins) {
+  ClassValue* class = (ClassValue* ) vector_get(vm->const_pool, ins->class);
+  VMObj* obj = NULL;
+  for (int i = 0; i< class->slots->size; i++) {
+    int j = 1;
+    int pool_idx = (int) vector_get(class->slots, class->slots->size - i - 1);
+    Value* slot = (Value* ) vector_get(vm->const_pool, pool_idx);
+    if (slot->tag == METHOD_VAL) {
+    } else {
+      if (obj == NULL) {
+        obj = malloc(sizeof(VMObj) + (sizeof(void*) * (class->slots->size - i)));
+      }
+      obj->slots[class->slots->size - i - j] = vector_pop(vm->stack);
+      j++;
+    }
+  }
+  if (obj == NULL) obj = malloc(sizeof(VMObj));
+  obj->parent = vector_pop(vm->stack);
+  obj->tag = ins->class;
+  vector_add(vm->stack, obj);
   vm->IP++;
 }
 
@@ -339,7 +411,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   object #%d", i->class);
         #endif
-        op_object(vm, i);
+        op_object2(vm, i);
         break;
       }
       case SLOT_OP: {
@@ -347,7 +419,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   slot #%d", i->name);
         #endif
-        op_slot(vm, i);
+        op_slot2(vm, i);
         break;
       }
       case SET_SLOT_OP: {
@@ -355,7 +427,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   set-slot #%d", i->name);
         #endif
-        op_set_slot(vm, i);
+        op_set_slot2(vm, i);
         break;
       }
       case CALL_SLOT_OP: {
@@ -363,7 +435,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   call-slot #%d %d", i->name, i->arity);
         #endif
-        op_call_slot(vm, i);
+        op_call_slot2(vm, i);
         break;
       }
       case CALL_OP: {
@@ -446,18 +518,19 @@ void run(VM* vm) {
 
 //===================== UTILS ================================
 
-MethodValue* search_class_for_method(VM* vm, ClassValue* class, int method_name) {
+MethodValue* search_class_for_method(VM* vm, VMObj* object, int method_name) {
+    ClassValue* class = vector_get(vm->const_pool, object->tag);
     for (int j = 0; j < class->slots->size; j++) {
-      Value* value = (Value*) vector_get(class->slots, class->slots->size - j - 1); 
+      int idx = (int) vector_get(class->slots, class->slots->size - j - 1);
+      Value* value = vector_get(vm->const_pool, idx);
       if (value->tag == METHOD_VAL) {
         MethodValue* methodVal = (MethodValue* ) value;
         if (methodVal->name == method_name) {
           return methodVal;
-          //vm->IP = &methodVal->code->array[0];
         }
       }
     }
-    search_class_for_method(vm, (ClassValue*) vector_peek(class->slots), method_name);
+    search_class_for_method(vm, (VMObj*) vector_peek(object->parent), method_name);
 }
 
 //===================== BUILTINS ================================
