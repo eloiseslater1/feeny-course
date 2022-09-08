@@ -21,14 +21,34 @@ typedef struct {
 void interpret_bc (Program* prog);
 VM* init_vm(Program* p);
 
+typedef enum {
+    VM_INT,
+    VM_NULL,
+    VM_ARRAY,
+} VM_TAG;
+
 typedef struct {
-    int tag;
+    long tag;
+} VMValue;
+
+typedef struct {
+    long tag;
+    long value;
+} VMInt;
+
+typedef struct {
+    long tag;
+    long null;
+} VMNull;
+
+typedef struct {
+    long tag;
     void* parent;
     void* slots[];
 } VMObj;
 
 typedef struct {
-    int tag;
+    long tag;
     int length;
     void* items[];
 } VMArray;

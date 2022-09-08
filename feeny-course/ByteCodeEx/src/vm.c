@@ -28,23 +28,37 @@ void op_print(VM* vm, PrintfIns* i);
 void op_lit(VM* vm, LitIns* i);
 
 MethodValue* search_class_for_method(VM* vm, VMObj* class, int method_name);
-Value* fe_set(void** args);
-Value* fe_get(void** args);
-Value* fe_len(void** args);
-Value* fe_add(void** args);
-Value* fe_sub(void** args);
-Value* fe_mult(void** args);
-Value* fe_div(void** args);
-Value* fe_mod(void** args);
-Value* fe_lt(void** args);
-Value* fe_le(void** args);
-Value* fe_gt(void** args);
-Value* fe_ge(void** args);
-Value* fe_eq(void** args);
-Value* create_int(int a);
-Value* create_null_or_int(int a);
+VMValue* fe_set(void** args);
+VMValue* fe_get(void** args);
+VMValue* fe_len(void** args);
+VMValue* fe_add(void** args);
+VMValue* fe_sub(void** args);
+VMValue* fe_mult(void** args);
+VMValue* fe_div(void** args);
+VMValue* fe_mod(void** args);
+VMValue* fe_lt(void** args);
+VMValue* fe_le(void** args);
+VMValue* fe_gt(void** args);
+VMValue* fe_ge(void** args);
+VMValue* fe_eq(void** args);
+VMValue* create_int(int a);
+VMValue* create_null_or_int(long a);
+VMValue* create_null();
 ht* init_builtins();
-Value* format_print(StringValue* format_string, void** args);
+VMValue* format_print(StringValue* format_string, void** args);
+
+
+//---------------------------------------------------------------------------
+//--------------------------------memory-------------------------------------
+//---------------------------------------------------------------------------
+#define MB (1024 * 1024);
+
+
+
+//---------------------------------------------------------------------------
+//-------------------------------init-vm-------------------------------------
+//---------------------------------------------------------------------------
+
 
 VM* init_vm(Program* p) {
   VM* vm = malloc(sizeof(VM));
@@ -111,6 +125,10 @@ void add_globals(ht* hm, Vector* const_pool, Vector* globals) {
   }
 }
 
+//---------------------------------------------------------------------------
+//--------------------------------OP Functions-------------------------------
+//---------------------------------------------------------------------------
+
 void op_return(VM* vm) {
   if (vm->current_frame->parent != NULL) {
     Frame* old_frame = vm->current_frame;
@@ -128,28 +146,28 @@ void op_drop(VM* vm) {
 }
 
 void op_goto(VM* vm, GotoIns* i) {
-  StringValue* value = (StringValue*) vector_get(vm->const_pool, i->name);
+  StringValue* value = vector_get(vm->const_pool, i->name);
   vm->IP = ht_get(vm->labels, value->value);
 }
 
 void op_branch(VM* vm, BranchIns* i) {
-  Value* value = (Value*) vector_pop(vm->stack);
-  if (value->tag == NULL_VAL) {
+  Value* value = vector_pop(vm->stack);
+  if (value->tag == VM_NULL) {
     vm->IP++;
     return;
   }
-  StringValue* label = (StringValue*) vector_get(vm->const_pool, i->name);
+  StringValue* label = vector_get(vm->const_pool, i->name);
   vm->IP = ht_get(vm->labels, label->value);
 }
 
 void op_get_global(VM* vm, GetGlobalIns* i) {
-  StringValue* string = (StringValue*) vector_get(vm->const_pool, i->name);
+  StringValue* string = vector_get(vm->const_pool, i->name);
   vector_add(vm->stack, ht_get(vm->hm, string->value));
   vm->IP++;
 }
 
 void op_set_global(VM* vm, SetGlobalIns* i) {
-  StringValue* string = (StringValue*) vector_get(vm->const_pool, i->name);
+  StringValue* string = vector_get(vm->const_pool, i->name);
   ht_set(vm->hm, string->value, vector_peek(vm->stack));
   vm->IP++;
 }
@@ -165,7 +183,7 @@ void op_set_local(VM* vm, SetLocalIns* i) {
 }
 
 void op_call(VM* vm, CallIns* i) {
-  MethodValue* method = (MethodValue*) ht_get(vm->hm, ((StringValue*) vector_get(vm->const_pool, i->name))->value);
+  MethodValue* method = ht_get(vm->hm, ((StringValue*) vector_get(vm->const_pool, i->name))->value);
   vm->current_frame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
   for (int j = 0; j < i->arity; j++) {
     vm->current_frame->variables[i->arity - j - 1] = vector_pop(vm->stack);
@@ -179,12 +197,12 @@ void op_call_slot(VM* vm, CallSlotIns* i) {
   for (int j = 0; j < i->arity; j++) {
       args[i->arity - j - 1] = vector_pop(vm->stack);
   }
-  switch (((Value*)args[0])->tag) {
-    case (ARRAY_VAL):
-    case (INT_VAL): {
-      Value* (*func)(void**) = ht_get(vm->inbuilt, method_name);
-      Value* return_value = (*func)(args); 
-      vector_add(vm->stack, (void*) return_value);
+  switch (((VMValue*)args[0])->tag) {
+    case (VM_ARRAY):
+    case (VM_INT): {
+      VMValue* (*func)(void**) = ht_get(vm->inbuilt, method_name);
+      VMValue* return_value = (*func)(args); 
+      vector_add(vm->stack, return_value);
       vm->IP++;
       free(args);
       break;
@@ -244,31 +262,33 @@ void op_object(VM* vm, ObjectIns* ins) {
 }
 
 void op_array(VM* vm) {
-  IntValue* initial = vector_pop(vm->stack);
-  IntValue* len = vector_pop(vm->stack);
+  VMInt* initial = vector_pop(vm->stack);
+  VMInt* len = vector_pop(vm->stack);
   VMArray* array = malloc(sizeof(VMArray) + (sizeof(void*) * len->value));
   for (int i = 0; i < len->value; i++) {
     array->items[i] = initial->value;
   }
-  array->tag = ARRAY_VAL;
+  array->tag = VM_ARRAY;
   array->length = len->value;
-  vector_add(vm->stack, (void *) array);
+  vector_add(vm->stack, array);
   vm->IP++;
 }
 
 void op_print(VM* vm, PrintfIns* i) {
-  StringValue* string_format = (StringValue*) vector_get(vm->const_pool, i->format);
+  StringValue* string_format = vector_get(vm->const_pool, i->format);
   void** args = malloc(sizeof(void*) * i->arity);
   for (int j = 0; j < i->arity; j++) {
     args[i->arity - j - 1] = vector_pop(vm->stack);
   }
-  Value* null = format_print(string_format, args);
+  VMValue* null = format_print(string_format, args);
   vector_add(vm->stack, null);
   vm->IP++;
 }
 
 void op_lit(VM* vm, LitIns* i) {
-  vector_add(vm->stack, vector_get(vm->const_pool, i->idx));
+  Value* value = vector_get(vm->const_pool, i->idx);
+  VMValue* lit = (value->tag == NULL_VAL) ? create_null() : create_int(((IntValue*) value)->value);
+  vector_add(vm->stack, lit);
   vm->IP++;
 }
 
@@ -469,96 +489,98 @@ ht* init_builtins() {
   return inbuilt_hash;
 }
 
-Value* fe_set(void** args) {
-  int pos = ((IntValue*) args[1])->value;
-  int value = ((IntValue*) args[2])->value;
+VMValue* fe_set(void** args) {
+  int pos = ((VMInt*) args[1])->value;
+  int value = ((VMInt*) args[2])->value;
   VMArray* array = args[0];
   array->items[pos]= value;
   return create_null_or_int(0);
 }
 
-Value* fe_get(void** args) {
-  int pos = ((IntValue*) args[1])->value;
+VMValue* fe_get(void** args) {
+  int pos = ((VMInt*) args[1])->value;
   VMArray* array = args[0];
   int value = array->items[pos];
   return create_int(value);
 }
 
-Value* fe_len(void** args) {
+VMValue* fe_len(void** args) {
   return create_int(((VMArray* ) args[0])->length);
 }
 
-Value* fe_add(void** args) {
-  return create_int(((IntValue*) args[0])->value + ((IntValue*) args[1])->value);
+VMValue* fe_add(void** args) {
+  return create_int(((VMInt*) args[0])->value + ((VMInt*) args[1])->value);
 }
 
-Value* fe_sub(void** args) {
-  return create_int(((IntValue*) args[0])->value - ((IntValue*) args[1])->value);
+VMValue* fe_sub(void** args) {
+  return create_int(((VMInt*) args[0])->value - ((VMInt*) args[1])->value);
 }
 
-Value* fe_mult(void** args) {
-  return create_int(((IntValue*) args[0])->value * ((IntValue*) args[1])->value);
+VMValue* fe_mult(void** args) {
+  return create_int(((VMInt*) args[0])->value * ((VMInt*) args[1])->value);
 }
 
-Value* fe_div(void** args) {
-  return create_int(((IntValue*) args[0])->value / ((IntValue*) args[1])->value);
+VMValue* fe_div(void** args) {
+  return create_int(((VMInt*) args[0])->value / ((VMInt*) args[1])->value);
 }
 
-Value* fe_mod(void** args) {
-  return create_int(((IntValue*) args[0])->value % ((IntValue*) args[1])->value);
+VMValue* fe_mod(void** args) {
+  return create_int(((VMInt*) args[0])->value % ((VMInt*) args[1])->value);
 }
 
-Value* fe_lt(void** args) {
-  return create_null_or_int(((IntValue*) args[0])->value < ((IntValue*) args[1])->value);
+VMValue* fe_lt(void** args) {
+  return create_null_or_int(((VMInt*) args[0])->value < ((VMInt*) args[1])->value);
 }
 
-Value* fe_le(void** args) {
-  return create_null_or_int(((IntValue*) args[0])->value <= ((IntValue*) args[1])->value);
+VMValue* fe_le(void** args) {
+  return create_null_or_int(((VMInt*) args[0])->value <= ((VMInt*) args[1])->value);
 }
 
-Value* fe_gt(void** args) {
-  return create_null_or_int(((IntValue*) args[0])->value > ((IntValue*) args[1])->value);
+VMValue* fe_gt(void** args) {
+  return create_null_or_int(((VMInt*) args[0])->value > ((VMInt*) args[1])->value);
 }
 
-Value* fe_ge(void** args) {
-  return create_null_or_int(((IntValue*) args[0])->value >= ((IntValue*) args[1])->value);
+VMValue* fe_ge(void** args) {
+  return create_null_or_int(((VMInt*) args[0])->value >= ((VMInt*) args[1])->value);
 }
 
-Value* fe_eq(void** args) {
-  return create_null_or_int(((IntValue*) args[0])->value == ((IntValue*) args[1])->value);
+VMValue* fe_eq(void** args) {
+  return create_null_or_int(((VMInt*) args[0])->value == ((VMInt*) args[1])->value);
 }
 
-Value* create_null_or_int(int a) {
+VMValue* create_null_or_int(long a) {
   if (a) {
-    return (Value*) create_int(a);
+    return (VMValue*) create_int(a);
   }
   else {
-    Value* value = malloc(sizeof(Value));
-    value->tag = NULL_VAL;
-    return value;
+    return (VMValue*) create_null();
   }
 }
 
-Value* create_int(int a) {
-  IntValue* value = malloc(sizeof(IntValue));
-  value->value = a;
-  value->tag = INT_VAL;
-  return (Value*) value;
+VMValue* create_null() {
+  VMNull* null = malloc(sizeof(VMNull));
+  null->tag = VM_NULL;
+  return (VMValue*) null;
 }
 
-Value* format_print(StringValue* format_string, void **args) {
+VMValue* create_int(int a) {
+  VMInt* value = malloc(sizeof(VMInt));
+  value->value = a;
+  value->tag = VM_INT;
+  return (VMValue*) value;
+}
+
+VMValue* format_print(StringValue* format_string, void **args) {
     char *string = format_string->value;
     int i = 0;
     while (*string != '\0') {
         if (*string == '~') {
-            printf("%d", ((IntValue*) args[i])->value);
+            printf("%ld", ((VMInt*) args[i])->value);
             string++;
             i++;
         }
         printf("%c", *string);
         string++;
     }
-    Value* null = (Value*) malloc(sizeof(NULL_VAL));
-    null->tag = NULL_VAL;
-    return null;
+    return create_null();
 }
