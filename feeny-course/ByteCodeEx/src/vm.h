@@ -13,6 +13,7 @@ typedef struct {
     ht* hm;
     ht* labels;
     ht* inbuilt;
+    Vector* globals;
     Frame* current_frame;
     Vector* const_pool;
     void** IP;

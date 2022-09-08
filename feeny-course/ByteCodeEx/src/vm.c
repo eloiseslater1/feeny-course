@@ -5,7 +5,7 @@
 
 #include "vm.h"
 
-void add_globals(ht* hm, Vector* const_pool, Vector* globals);
+void add_globals(VM* vm, Vector* globals);
 void interpret(ht*, int entry_point);
 void run(VM* vm);
 void add_labels(ht* hm, Vector* const_pool);
@@ -66,14 +66,15 @@ VM* init_vm(Program* p) {
   vm->hm = ht_create();
   vm->labels = ht_create();
   vm->inbuilt = init_builtins();
-  add_globals(vm->hm, p->values, p->slots);
+  vm->globals = make_vector();
+  vm->const_pool = p->values;
+  add_globals(vm, p->slots);
   add_labels(vm->labels, p->values);
   MethodValue* entry_func = (MethodValue*) vector_get(p->values, p->entry);
   vm->IP = &entry_func->code->array[0];
   vm->current_frame =  make_frame(entry_func->nargs + entry_func->nlocals, 
                                   NULL, 
                                   vm->IP);
-  vm->const_pool = p->values;
   print_prog(p);
   return vm;
 }
@@ -116,14 +117,28 @@ void add_labels(ht* hm, Vector* const_pool) {
   }
 }
 
-void add_globals(ht* hm, Vector* const_pool, Vector* globals) {
+char* add_global_ht(VM* vm, int name_idx, void* value_idx) {
+  char* name = ((StringValue*)vector_get(vm->const_pool, name_idx))->value;
+  ht_set(vm->hm, name, value_idx);
+  return name;
+}
+
+void add_globals(VM* vm, Vector* globals) {
   for (int i = 0; i < globals->size; i++) {
-    void* value_idx = vector_get(const_pool, (int)vector_get(globals, i));
-    int name_idx = ((Value*) value_idx)->tag == SLOT_VAL ? ((SlotValue*) value_idx)->name : ((MethodValue*) value_idx)->name;
-    char* name = ((StringValue*)vector_get(const_pool, name_idx))->value;
-    ht_set(hm, name, value_idx);
+    void* value_idx = vector_get(vm->const_pool, (int)vector_get(globals, i));
+    if (((Value*) value_idx)->tag == SLOT_VAL) {
+      vector_add(vm->globals, add_global_ht(vm, ((SlotValue*) value_idx)->name, value_idx));
+     } else {
+      add_global_ht(vm, ((MethodValue*) value_idx)->name, value_idx);
+     } 
   }
 }
+
+//---------------------------------------------------------------------------
+//--------------------------------Frames-------------------------------------
+//---------------------------------------------------------------------------
+
+
 
 //---------------------------------------------------------------------------
 //--------------------------------OP Functions-------------------------------
@@ -162,6 +177,7 @@ void op_branch(VM* vm, BranchIns* i) {
 
 void op_get_global(VM* vm, GetGlobalIns* i) {
   StringValue* string = vector_get(vm->const_pool, i->name);
+  // i_name idx to const pool for str. 
   vector_add(vm->stack, ht_get(vm->hm, string->value));
   vm->IP++;
 }
