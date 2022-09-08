@@ -27,4 +27,10 @@ typedef struct {
     void* slots[];
 } VMObj;
 
+typedef struct {
+    int tag;
+    int length;
+    void* items[];
+} VMArray;
+
 #endif

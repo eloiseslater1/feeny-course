@@ -168,13 +168,12 @@ void op_call(VM* vm, CallIns* i) {
   MethodValue* method = (MethodValue*) ht_get(vm->hm, ((StringValue*) vector_get(vm->const_pool, i->name))->value);
   vm->current_frame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
   for (int j = 0; j < i->arity; j++) {
-    //printf("adding to index: %i tag: %i", i, ((Value*) vector_get(vm->stack)))
     vm->current_frame->variables[i->arity - j - 1] = vector_pop(vm->stack);
   }
   vm->IP = &method->code->array[0];
 } 
 
-void op_call_slot2(VM* vm, CallSlotIns* i) {
+void op_call_slot(VM* vm, CallSlotIns* i) {
   char* method_name = ((StringValue*) vector_get(vm->const_pool, i->name))->value;
   void** args = malloc(sizeof(void*) * i->arity);
   for (int j = 0; j < i->arity; j++) {
@@ -205,93 +204,23 @@ void op_call_slot2(VM* vm, CallSlotIns* i) {
   }
 }
 
-// void op_call_slot(VM* vm, CallSlotIns* i) {
-//   char* method_name = ((StringValue*) vector_get(vm->const_pool, i->name))->value;
-//   void** args = malloc(sizeof(void*) * i->arity);
-//   for (int j = 0; j < i->arity; j++) {
-//       args[i->arity - j - 1] = vector_pop(vm->stack);
-//   }
-//   switch (((Value*)args[0])->tag) {
-//     case (ARRAY_VAL):
-//     case (INT_VAL): {
-//       Value* (*func)(void**) = ht_get(vm->inbuilt, method_name);
-//       Value* return_value = (*func)(args); 
-//       vector_add(vm->stack, (void*) return_value);
-//       vm->IP++;
-//       free(args);
-//       break;
-//     }
-//     case (CLASS_VAL): {
-//       ClassValue* object = (ClassValue*) args[0];
-//       MethodValue* method = search_class_for_method(vm, object, i->name);
-//       Frame* newFrame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
-//       for (int j = 0; j < i->arity; j++) {
-//         newFrame->variables[j] = args[j];
-//       }
-//       vm->current_frame = newFrame;
-//       vm->IP = &method->code->array[0];
-//       free(args);
-//       break;
-//     }
-//     default:
-//       printf("Unknown value");
-//       exit(-1);
-//   }
-// }
-
-void op_set_slot2(VM* vm, SetSlotIns* i) {
+void op_set_slot(VM* vm, SetSlotIns* i) {
   void* valToStore = vector_pop(vm->stack);
   VMObj* object = vector_pop(vm->stack);
-  ClassValue* class = (ClassValue*) vector_get(vm->const_pool, object->tag);
-  int varIdx;
-  for (int j = 0; j < class->slots->size; j++) {
-    int parIdx = (int) vector_get(class->slots, j);
-    SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
-    if (parName->name == i->name) {
-      varIdx = j;
-      break;
-    }
-  }
+  int varIdx = search_for_slot_idx(vm, object, i->name);
   object->slots[varIdx] = valToStore;
   vector_add(vm->stack, valToStore);
   vm->IP++;
 }
 
-void op_slot2(VM* vm, SlotIns* i) {
+void op_slot(VM* vm, SlotIns* i) {
   VMObj* object = vector_pop(vm->stack);
-  ClassValue* class = vector_get(vm->const_pool, object->tag);
-  StringValue* name = (StringValue*) vector_get(vm->const_pool, i->name);
-  int varIdx;
-  for (int j = 0; j < class->slots->size; j++) {
-    int parIdx = (int) vector_get(class->slots, j);
-    SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
-    if (parName->name == i->name) {
-        varIdx = j;
-        break;
-      }
-  }
+  int varIdx = search_for_slot_idx(vm, object, i->name);
   vector_add(vm->stack, object->slots[varIdx]);
   vm->IP++;
 }
 
-void op_slot(VM* vm, SlotIns* i) {
-  ClassValue* object = (ClassValue*) vector_pop(vm->stack);
-  ClassValue* class = (ClassValue*) vector_get(object->slots, object->slots->size - 2);
-  StringValue* name = (StringValue*) vector_get(vm->const_pool, i->name);
-  int varIdx;
-  for (int j = 0; j < class->slots->size; j++) {
-    int parIdx = (int) vector_get(class->slots, j);
-    SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
-    if (parName->name == i->name) {
-        varIdx = j;
-        break;
-      }
-  }
-  vector_add(vm->stack, vector_get(object->slots, varIdx));
-  vm->IP++;
-}
-
-void op_object2(VM* vm, ObjectIns* ins) {
+void op_object(VM* vm, ObjectIns* ins) {
   ClassValue* class = (ClassValue* ) vector_get(vm->const_pool, ins->class);
   VMObj* obj = NULL;
   for (int i = 0; i< class->slots->size; i++) {
@@ -314,41 +243,16 @@ void op_object2(VM* vm, ObjectIns* ins) {
   vm->IP++;
 }
 
-void op_object(VM* vm, ObjectIns* i) {
-  ClassValue* class = (ClassValue* ) vector_get(vm->const_pool, i->class);
-  ClassValue* newObject = malloc(sizeof(ClassValue));
-  Value* emptyVal = malloc(sizeof(Value));
-  newObject->slots = make_vector();
-  newObject->tag = CLASS_VAL;
-  vector_set_length(newObject->slots, class->slots->size, emptyVal);
-  for (int j = 0; j < class->slots->size; j++) {
-      int pool_idx = (int) vector_get(class->slots, class->slots->size - j - 1);
-      Value* slot = (Value* ) vector_get(vm->const_pool, pool_idx);
-      if (slot->tag == SLOT_VAL) {
-        slot = vector_pop(vm->stack);
-      }
-      vector_set(newObject->slots, class->slots->size - j - 1, slot);
-  }
-  vector_add(newObject->slots, class);
-  vector_add(newObject->slots, vector_pop(vm->stack));
-  vector_add(vm->stack, newObject);
-  free(emptyVal);
-  vm->IP++;
-}
-
 void op_array(VM* vm) {
-  IntValue* initial = (IntValue*) vector_pop(vm->stack);
-  IntValue* len = (IntValue*) vector_pop(vm->stack);
-  int* array = (int*) malloc(sizeof(int) * len->value);
+  IntValue* initial = vector_pop(vm->stack);
+  IntValue* len = vector_pop(vm->stack);
+  VMArray* array = malloc(sizeof(VMArray) + (sizeof(void*) * len->value));
   for (int i = 0; i < len->value; i++) {
-    array[i] = initial->value;
+    array->items[i] = initial->value;
   }
-  ArrayValue* value = malloc(sizeof(ArrayValue));
-  value->tag = ARRAY_VAL;
-  value->value = array;
-  value->len = len->value;
-  vector_add(vm->stack, (void *) value);
-  ArrayValue* arrayVal = (ArrayValue* ) vector_peek(vm->stack);
+  array->tag = ARRAY_VAL;
+  array->length = len->value;
+  vector_add(vm->stack, (void *) array);
   vm->IP++;
 }
 
@@ -411,7 +315,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   object #%d", i->class);
         #endif
-        op_object2(vm, i);
+        op_object(vm, i);
         break;
       }
       case SLOT_OP: {
@@ -419,7 +323,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   slot #%d", i->name);
         #endif
-        op_slot2(vm, i);
+        op_slot(vm, i);
         break;
       }
       case SET_SLOT_OP: {
@@ -427,7 +331,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   set-slot #%d", i->name);
         #endif
-        op_set_slot2(vm, i);
+        op_set_slot(vm, i);
         break;
       }
       case CALL_SLOT_OP: {
@@ -435,7 +339,7 @@ void run(VM* vm) {
         #ifdef DEBUG
           printf("   call-slot #%d %d", i->name, i->arity);
         #endif
-        op_call_slot2(vm, i);
+        op_call_slot(vm, i);
         break;
       }
       case CALL_OP: {
@@ -533,6 +437,17 @@ MethodValue* search_class_for_method(VM* vm, VMObj* object, int method_name) {
     search_class_for_method(vm, (VMObj*) vector_peek(object->parent), method_name);
 }
 
+int search_for_slot_idx(VM* vm, VMObj* object, int name) {
+  ClassValue* class = (ClassValue*) vector_get(vm->const_pool, object->tag);
+  for (int i = 0; i < class->slots->size; i++) {
+    int parIdx = (int) vector_get(class->slots, i);
+    SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
+    if (parName->name == name) {
+      return i;
+    }
+  }
+}
+
 //===================== BUILTINS ================================
 
 
@@ -555,19 +470,22 @@ ht* init_builtins() {
 }
 
 Value* fe_set(void** args) {
-  IntValue* pos = ((IntValue*) args[1]);
-  IntValue* value = ((IntValue*) args[2]);
-  ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value] = value->value;
+  int pos = ((IntValue*) args[1])->value;
+  int value = ((IntValue*) args[2])->value;
+  VMArray* array = args[0];
+  array->items[pos]= value;
   return create_null_or_int(0);
 }
 
 Value* fe_get(void** args) {
-  int value = ((ArrayValue*) args[0])->value[((IntValue*) args[1])->value];
+  int pos = ((IntValue*) args[1])->value;
+  VMArray* array = args[0];
+  int value = array->items[pos];
   return create_int(value);
 }
 
 Value* fe_len(void** args) {
-  return create_int(((ArrayValue* ) args[0])->len);
+  return create_int(((VMArray* ) args[0])->length);
 }
 
 Value* fe_add(void** args) {
