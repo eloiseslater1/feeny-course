@@ -3,7 +3,7 @@
 #include<string.h>
 #include "utils.h"
 #include "bytecode.h"
-#include "vm.h"
+#include "vm2.h"
 
 
 int main (int argc, char** argvs) {
