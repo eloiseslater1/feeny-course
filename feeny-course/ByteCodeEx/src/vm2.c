@@ -7,10 +7,17 @@ void* format_print(char* string, void **args);
 StackFrame* init_frame();
 ht* init_builtins();
 
+void init_genv(VM* vm) {
+    vm->genv = malloc(sizeof(void*) * vm->globals->size);
+    for (int i = 0; i < vm->globals->size; i++) {
+        vm->genv[i] = vm->null;
+    }
+}
+
 VM* init_vm(Program* program) {
     VM* vm = malloc(sizeof(VM));
     vm->heap = init_heap();
-    vm->global = make_vector();
+    vm->globals = make_vector();
     vm->fstack = init_frame();
     vm->patch_buffer = make_vector();
     vm->hm = ht_create();
@@ -19,6 +26,7 @@ VM* init_vm(Program* program) {
     vm->program = program;
     vm->stack = make_vector();
     vm->inbuilt = init_builtins();
+    init_genv(vm);
     return vm;
 }
 
@@ -65,20 +73,41 @@ Entry* link_entries_with_int(VM* vm, Entry* entry, int name) {
     sprintf(int_char,"%d", name);
     ht_set(vm->hm, int_char, entry);
 }
+//---------------------------------------------------------------------------
+//--------------------------------globals------------------------------------
+//---------------------------------------------------------------------------
+
+int get_global_idx(VM* vm, int name) {
+    for (int i = 0; i < vm->globals->size; i++) {
+        int gname = (int) vector_get(vm->globals, i);
+        if (name == gname) return i;
+    }
+    printf("No global with name %d.\n", name);
+    exit(-1);
+}
 
 //---------------------------------------------------------------------------
 //--------------------------------Patches------------------------------------
 //---------------------------------------------------------------------------
 
-
-void write_patch_pointer(VM* vm, int name, int tag) {
-    align_ptr(vm->code_buffer);
+void make_patch(VM* vm, int name, int tag) {
     Patch* patch = malloc(sizeof(Patch));
     patch->type = tag;
     patch->code_pos = get_code_idx(vm->code_buffer);
     patch->name = name;
     vector_add(vm->patch_buffer, patch);
+}
+
+void write_patch_pointer(VM* vm, int name, int tag) {
+    align_ptr(vm->code_buffer);
+    make_patch(vm, name, tag);
     write_ptr(vm->code_buffer, 0);
+}
+
+void write_patch_int(VM* vm, int name) {
+    align_int(vm->code_buffer);
+    make_patch(vm, name, INT_PATCH);
+    write_int(vm->code_buffer, 0);
 }
 
 //---------------------------------------------------------------------------
@@ -121,10 +150,11 @@ void parse_ins(VM* vm, ByteIns* ins) {
             break;
         }
         case ARRAY_OP: {
-        #ifdef DEBUG
-            printf("   array");
-        #endif
-        break;
+            #ifdef DEBUG
+                printf("   array");
+            #endif
+            write_int(vm->code_buffer, ARRAY_INS);
+            break;
         }
         case OBJECT_OP: {
         ObjectIns* i = (ObjectIns*)ins;
@@ -187,18 +217,22 @@ void parse_ins(VM* vm, ByteIns* ins) {
             break;
         }
         case SET_GLOBAL_OP: {
-        SetGlobalIns* i = (SetGlobalIns*)ins;
-        #ifdef DEBUG
-            printf("   set global #%d", i->name);
-        #endif
-        break;
+            SetGlobalIns* i = (SetGlobalIns*)ins;
+            #ifdef DEBUG
+                printf("   set global #%d", i->name);
+            #endif
+            write_int(vm->code_buffer, SET_GLOBAL_INS);
+            write_patch_int(vm, i->name);
+            break;
         }
         case GET_GLOBAL_OP: {
-        GetGlobalIns* i = (GetGlobalIns*)ins;
-        #ifdef DEBUG
-            printf("   get global #%d", i->name);
-        #endif
-        break;
+            GetGlobalIns* i = (GetGlobalIns*)ins;
+            #ifdef DEBUG
+                printf("   get global #%d", i->name);
+            #endif
+            write_int(vm->code_buffer, GET_GLOBAL_INS);
+            write_patch_int(vm, i->name);
+            break;
         }
         case BRANCH_OP: {
             BranchIns* i = (BranchIns*)ins;
@@ -279,8 +313,14 @@ void process_programe(VM* vm) {
                 link_entries_with_int(vm, entry, method->name);
                 break;
             }
+            case (SLOT_VAL): {
+                SlotValue* svalue = (SlotValue*) value;
+                vector_add(vm->globals, (void*) svalue->name);
+                break;
+            }
             default: {
                 printf("don't handle tag: %d for global\n", value->tag);
+                exit(-1);
             }
         }
     }
@@ -292,6 +332,10 @@ void process_programe(VM* vm) {
             case (FUNCTION_PATCH): {
                 Entry* entry = get_entry_by_int(vm, patch->name);
                 ((void**)(vm->code_buffer->code + patch->code_pos))[0] = vm->code_buffer->code + entry->code_idx;
+                break;
+            } case(INT_PATCH): {
+                int idx = get_global_idx(vm, patch->name);
+                ((int*)(vm->code_buffer->code + patch->code_pos))[0] = idx;
                 break;
             }
             default: {
@@ -346,6 +390,16 @@ VMInt* create_int(VM* vm, int a) {
   value->value = a;
   return value;
 }
+
+VMArray* create_array(VM* vm, int length, int initial) {
+    VMArray* array = (VMArray*) halloc(vm->heap, VM_ARRAY, sizeof(VMArray) + sizeof(void*) * length);
+    for (int i = 0; i < length; i++) {
+        array->items[i] = initial;
+    }
+    array->tag = VM_ARRAY;
+    array->length = length;
+    return array;
+}
 //---------------------------------------------------------------------------
 //--------------------------------StackFrame------------------------------------
 //---------------------------------------------------------------------------
@@ -362,16 +416,16 @@ void add_frame(VM* vm) {
     int nlocals = next_int(vm);
     vm->fstack->fp = (vm->fstack->stack->size > 0) ? vm->fstack->stack->size - 2 : 0; //size = 9, fp = 7
     vector_set_length(vm->fstack->stack, vm->fstack->stack->size + nargs + nlocals, vm->null);
-    for (int i = 0; i < nargs; i++) {
-        vector_set(vm->fstack->stack, vm->fstack->fp + 2 + i, vector_pop(vm->stack));
+    for (int i = nargs; i > 0; i--) {
+        vector_set(vm->fstack->stack, vm->fstack->fp + 1 + i, vector_pop(vm->stack));
     }
 }
 
 void runvm (VM* vm) {  
   while (vm->ip) {
     int tag = next_int(vm);
+    //printf("tag is: %d", tag);
     #ifdef DEBUG
-        //printf("tag is: %d\n", tag);
         printf("STACK: ");
         for (int i = 0; i < vm->stack->size; i++) {
             VMValue* value = vector_get(vm->stack, i);
@@ -382,6 +436,13 @@ void runvm (VM* vm) {
                 } case (NULL_VAL): {
                     printf("null, ", ((VMInt*) value)->value);
                     break;
+                } case (VM_ARRAY): {
+                    VMArray* array = (VMArray*) value;
+                    printf("(");
+                    for(int i = 0; i < array->length; i++) {
+                        printf("%d, ", (int) array->items[i]);
+                    }
+                    printf(")");
                 }
             }
         }
@@ -419,6 +480,12 @@ void runvm (VM* vm) {
             break;
         }
         case ARRAY_INS : {
+            #ifdef DEBUG
+                printf("array\n");
+            #endif
+            VMInt* intial = vector_pop(vm->stack);
+            VMInt* length = vector_pop(vm->stack);
+            vector_add(vm->stack, create_array(vm, length->value, intial->value));
             break;
         }
         case OBJECT_INS: {
@@ -431,7 +498,6 @@ void runvm (VM* vm) {
             break;
         }
         case CALL_SLOT_INS: {
-            //printf("size: %d", vm->fstack->stack->size);
             int arity = next_int(vm);
             char* name = next_ptr(vm);
             #ifdef DEBUG
@@ -488,9 +554,19 @@ void runvm (VM* vm) {
             break;
         }
         case SET_GLOBAL_INS : {
+            int idx = next_int(vm);
+            #ifdef DEBUG
+                printf("set global : %d\n", idx);
+            #endif
+            vm->genv[idx] = vector_peek(vm->stack);
             break;
         }
         case GET_GLOBAL_INS : {
+            int idx = next_int(vm);
+            #ifdef DEBUG
+                printf("get global : %d\n", idx);
+            #endif
+            vector_add(vm->stack, vm->genv[idx]);
             break;
         }
         case BRANCH_INS : {
@@ -514,7 +590,7 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("return ins\n");
             #endif
-            if (vm->fstack->fp == 0) {
+            if (vm->fstack->stack->size == 0) {
                 return;
             }
             int old_fp = (int) vector_get(vm->fstack->stack, vm->fstack->fp);

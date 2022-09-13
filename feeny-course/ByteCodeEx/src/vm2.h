@@ -20,7 +20,7 @@ typedef struct {
 
 typedef struct {
     Vector* patch_buffer;
-    Vector* global;
+    Vector* globals;
     Program* program;
     ht* hm;
     Code* code_buffer;
@@ -30,6 +30,7 @@ typedef struct {
     Heap* heap;
     ht* inbuilt;
     char* ip;
+    void** genv;
 } VM;
 
 typedef enum {
@@ -45,6 +46,7 @@ typedef struct {
 typedef enum {
     FUNCTION_PATCH,
     LABEL_PATCH,
+    INT_PATCH
 } PATCH_TYPE;
 
 typedef struct {
