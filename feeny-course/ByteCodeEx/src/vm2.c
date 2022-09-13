@@ -5,18 +5,20 @@ void process_programe(VM* vm);
 void runvm(VM* vm);
 void* format_print(char* string, void **args);
 StackFrame* init_frame();
+ht* init_builtins();
 
 VM* init_vm(Program* program) {
     VM* vm = malloc(sizeof(VM));
     vm->heap = init_heap();
     vm->global = make_vector();
+    vm->fstack = init_frame();
     vm->patch_buffer = make_vector();
     vm->hm = ht_create();
     vm->code_buffer = init_code_buffer();
-    vm->fstack = init_frame();
     vm->null = (VMNull*) create_null(vm);
     vm->program = program;
     vm->stack = make_vector();
+    vm->inbuilt = init_builtins();
     return vm;
 }
 
@@ -146,11 +148,15 @@ void parse_ins(VM* vm, ByteIns* ins) {
         break;
         }
         case CALL_SLOT_OP: {
-        CallSlotIns* i = (CallSlotIns*)ins;
-        #ifdef DEBUG
-            printf("   call-slot #%d %d", i->name, i->arity);
-        #endif
-        break;
+            CallSlotIns* i = (CallSlotIns*)ins;
+            #ifdef DEBUG
+                printf("   call-slot #%d %d", i->name, i->arity);
+            #endif
+            write_int(vm->code_buffer, CALL_SLOT_INS);
+            write_int(vm->code_buffer, i->arity);
+            StringValue* str = vector_get(vm->program->values, i->name);
+            write_ptr(vm->code_buffer, str->value);
+            break;
         }
         case CALL_OP: {
         CallIns* i = (CallIns*)ins;
@@ -354,12 +360,11 @@ StackFrame* init_frame() {
 void add_frame(VM* vm) {
     int nargs = next_int(vm);
     int nlocals = next_int(vm);
-    vm->fstack->fp = vm->fstack->stack->size - 2;
+    vm->fstack->fp = (vm->fstack->stack->size > 0) ? vm->fstack->stack->size - 2 : 0; //size = 9, fp = 7
     vector_set_length(vm->fstack->stack, vm->fstack->stack->size + nargs + nlocals, vm->null);
     for (int i = 0; i < nargs; i++) {
-        vector_set(vm->fstack->stack, vm->fstack->stack->size - i - 1, vector_pop(vm->stack));
+        vector_set(vm->fstack->stack, vm->fstack->fp + 2 + i, vector_pop(vm->stack));
     }
-    
 }
 
 void runvm (VM* vm) {  
@@ -367,13 +372,27 @@ void runvm (VM* vm) {
     int tag = next_int(vm);
     #ifdef DEBUG
         //printf("tag is: %d\n", tag);
+        printf("STACK: ");
+        for (int i = 0; i < vm->stack->size; i++) {
+            VMValue* value = vector_get(vm->stack, i);
+            switch(value->tag) {
+                case (VM_INT): {
+                    printf("int: %ld, ", ((VMInt*) value)->value);
+                    break;
+                } case (NULL_VAL): {
+                    printf("null, ", ((VMInt*) value)->value);
+                    break;
+                }
+            }
+        }
+        printf("\n");
     #endif
     switch (tag) {
         case INT_INS : {
-            #ifdef DEBUG
-                printf("int ins\n");
-            #endif
             VMInt* value = create_int(vm, next_int(vm));
+            #ifdef DEBUG
+                printf("int ins: tag: %ld, val: %ld\n", value->tag, value->value);
+            #endif
             vector_add(vm->stack, value);
             break;
         }
@@ -412,6 +431,32 @@ void runvm (VM* vm) {
             break;
         }
         case CALL_SLOT_INS: {
+            //printf("size: %d", vm->fstack->stack->size);
+            int arity = next_int(vm);
+            char* name = next_ptr(vm);
+            #ifdef DEBUG
+                printf("call-op #%d and str: %s\n", arity, name);
+            #endif
+            void** args = malloc(sizeof(void*) * arity);
+            for (int i = 0; i < arity; i++) {
+                args[arity - i - 1] = vector_pop(vm->stack);
+            }
+            switch (((VMValue*)args[0])->tag) {
+                case (VM_ARRAY):
+                case (VM_INT): {
+                    VMValue* (*func)(VM*, void**) = ht_get(vm->inbuilt, name);
+                    VMValue* return_value = (*func)(vm, args); 
+                    vector_add(vm->stack, return_value);
+                    free(args);
+                    break;
+                }
+                case (VM_NULL): {
+                    printf("No slots can be called on null value");
+                    exit(-1);
+                } default: {
+                    printf("exceting call slot on class");
+                }
+            }
             break;
         }
         case CALL_INS : {
@@ -428,7 +473,7 @@ void runvm (VM* vm) {
         case SET_LOCAL_INS : {
             int idx = next_int(vm);
             #ifdef DEBUG
-                printf("set local : %d\n", idx);
+                printf("set local : %d at: %d\n", idx, vm->fstack->fp + 2 + idx);
             #endif
             vector_set(vm->fstack->stack, vm->fstack->fp + 2 + idx, vector_peek(vm->stack));
             break;
@@ -513,3 +558,90 @@ void* format_print(char* string, void **args) {
     }
 }
 
+//===================== BUILTINS ================================
+
+VMValue* create_null_or_int(VM* vm, long a) {
+  if (a) {
+    return (VMValue*) create_int(vm, a);
+  }
+  else {
+    return create_null(vm);
+  }
+}
+
+VMValue* fe_set(VM* vm, void** args) {
+  int pos = ((VMInt*) args[1])->value;
+  int value = ((VMInt*) args[2])->value;
+  VMArray* array = args[0];
+  array->items[pos]= value;
+  return create_null_or_int(vm, 0);
+}
+
+VMValue* fe_get(VM* vm, void** args) {
+  int pos = ((VMInt*) args[1])->value;
+  VMArray* array = args[0];
+  int value = array->items[pos];
+  return (VMValue*) create_int(vm, value);
+}
+
+VMValue* fe_len(VM* vm, void** args) {
+  return (VMValue*) create_int(vm, ((VMArray* ) args[0])->length);
+}
+
+VMValue* fe_add(VM* vm, void** args) {
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value + ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_sub(VM* vm, void** args) {
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value - ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_mult(VM* vm, void** args) {
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value * ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_div(VM*vm, void** args) {
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value / ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_mod(VM* vm, void** args) {
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value % ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_lt(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value < ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_le(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value <= ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_gt(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value > ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_ge(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value >= ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_eq(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value == ((VMInt*) args[1])->value);
+}
+
+ht* init_builtins() {
+  ht* inbuilt_hash = ht_create();
+  ht_set(inbuilt_hash, "set", &fe_set);
+  ht_set(inbuilt_hash, "get", &fe_get);
+  ht_set(inbuilt_hash, "length", &fe_len);
+  ht_set(inbuilt_hash, "add", &fe_add);
+  ht_set(inbuilt_hash, "sub", &fe_sub);
+  ht_set(inbuilt_hash, "mul", &fe_mult);
+  ht_set(inbuilt_hash, "div", &fe_div);
+  ht_set(inbuilt_hash, "mod", &fe_mod);
+  ht_set(inbuilt_hash, "lt", &fe_lt);
+  ht_set(inbuilt_hash, "le", &fe_le);
+  ht_set(inbuilt_hash, "gt", &fe_gt);
+  ht_set(inbuilt_hash, "ge", &fe_ge);
+  ht_set(inbuilt_hash, "eq", &fe_eq);
+  return inbuilt_hash;
+}

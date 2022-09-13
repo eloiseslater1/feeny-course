@@ -3,7 +3,7 @@
 Heap* init_heap() {
     Heap* heap = malloc(sizeof(Heap));
     heap->size = MB;
-    heap->memory = malloc(sizeof(heap->size));
+    heap->memory = malloc(heap->size);
     heap->head = heap->memory + heap->size;
     heap->sp = heap->memory;
     return heap;

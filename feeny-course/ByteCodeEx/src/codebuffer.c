@@ -7,8 +7,8 @@
 
 Code* init_code_buffer() {
     Code* code_buffer = malloc(sizeof(Code));
-    code_buffer->code = malloc(MB);
-    code_buffer->capacity = MB;
+    code_buffer->code = malloc(MB * 24);
+    code_buffer->capacity = MB * 24;
     code_buffer->sp = code_buffer->code;
     return code_buffer;
 }

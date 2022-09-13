@@ -28,6 +28,7 @@ typedef struct {
     VMNull* null;
     Vector* stack;
     Heap* heap;
+    ht* inbuilt;
     char* ip;
 } VM;
 
