@@ -34,17 +34,17 @@ void interpret_bc (Program* p) {
 //---------------------------------------------------------------------------
 //--------------------------------Entries------------------------------------
 //---------------------------------------------------------------------------
-void add_entry(VM* vm, char* key) {
+void add_entry(VM* vm, char* key, int tag) {
     Entry* entry = malloc(sizeof(Entry));
     entry->code_idx = get_code_idx(vm->code_buffer);
-    entry->type = METHOD_ENTRY;
+    entry->type = tag;
     ht_set(vm->hm, key, entry);
 }
 
-void add_int_entry(VM* vm, int const_pool_idx) {
+void add_int_entry(VM* vm, int const_pool_idx, int tag) {
     char int_char[11];
     sprintf(int_char,"%d", const_pool_idx);
-    add_entry(vm, int_char);
+    add_entry(vm, int_char, tag);
     Entry* entry = ht_get(vm->hm, int_char);
 }
 
@@ -69,10 +69,10 @@ Entry* link_entries_with_int(VM* vm, Entry* entry, int name) {
 //---------------------------------------------------------------------------
 
 
-void patch_function_ptr(VM* vm, int name) {
+void write_patch_pointer(VM* vm, int name, int tag) {
     align_ptr(vm->code_buffer);
     Patch* patch = malloc(sizeof(Patch));
-    patch->type = FUNCTION_PATCH;
+    patch->type = tag;
     patch->code_pos = get_code_idx(vm->code_buffer);
     patch->name = name;
     vector_add(vm->patch_buffer, patch);
@@ -90,6 +90,7 @@ void parse_ins(VM* vm, ByteIns* ins) {
             #ifdef DEBUG
                 printf("label #%d", i->name);
             #endif
+            add_int_entry(vm, i->name, LABEL_ENTRY);
             break;
         }
         case LIT_OP: {
@@ -158,15 +159,17 @@ void parse_ins(VM* vm, ByteIns* ins) {
             #endif
             write_int(vm->code_buffer, CALL_INS);
             write_int(vm->code_buffer, i->arity);
-            patch_function_ptr(vm, i->name);
+            write_patch_pointer(vm, i->name, FUNCTION_PATCH);
         break;
         }
         case SET_LOCAL_OP: {
         SetLocalIns* i = (SetLocalIns*)ins;
-        #ifdef DEBUG
-            printf("   set local %d", i->idx);
-        #endif
-        break;
+            #ifdef DEBUG
+                printf("   set local %d", i->idx);
+            #endif
+            write_int(vm->code_buffer, SET_LOCAL_INS);
+            write_int(vm->code_buffer, i->idx);
+            break;
         }
         case GET_LOCAL_OP: {
             GetLocalIns* i = (GetLocalIns*)ins;
@@ -192,18 +195,22 @@ void parse_ins(VM* vm, ByteIns* ins) {
         break;
         }
         case BRANCH_OP: {
-        BranchIns* i = (BranchIns*)ins;
-        #ifdef DEBUG
-            printf("   branch #%d", i->name);
-        #endif
-        break;
+            BranchIns* i = (BranchIns*)ins;
+            #ifdef DEBUG
+                printf("   branch #%d", i->name);
+            #endif
+            write_int(vm->code_buffer, BRANCH_INS);
+            write_patch_pointer(vm, i->name, LABEL_PATCH);
+            break;
         }
         case GOTO_OP: {
-        GotoIns* i = (GotoIns*)ins;
-        #ifdef DEBUG
-            printf("   goto #%d", i->name);
-        #endif
-        break;
+            GotoIns* i = (GotoIns*)ins;
+            #ifdef DEBUG
+                printf("   goto #%d", i->name);
+            #endif
+            write_int(vm->code_buffer, GOTO_INS);
+            write_patch_pointer(vm, i->name, LABEL_PATCH);
+            break;
         }
         case RETURN_OP: {
             #ifdef DEBUG
@@ -243,7 +250,7 @@ void process_programe(VM* vm) {
         switch(value->tag) {
             case (METHOD_VAL): {
                 MethodValue* method = (MethodValue*) value;
-                add_int_entry(vm, i);
+                add_int_entry(vm, i, METHOD_ENTRY);
                 write_frame(method, vm->code_buffer);
                 for (int j = 0; j < method->code->size; j++) {
                     parse_ins(vm, (ByteIns*) vector_get(method->code, j));
@@ -275,6 +282,7 @@ void process_programe(VM* vm) {
     for (int i = 0; i < vm->patch_buffer->size; i++) {
         Patch* patch = vector_get(vm->patch_buffer, i);
         switch(patch->type) {
+            case (LABEL_PATCH):
             case (FUNCTION_PATCH): {
                 Entry* entry = get_entry_by_int(vm, patch->name);
                 ((void**)(vm->code_buffer->code + patch->code_pos))[0] = vm->code_buffer->code + entry->code_idx;
@@ -358,7 +366,7 @@ void runvm (VM* vm) {
   while (vm->ip) {
     int tag = next_int(vm);
     #ifdef DEBUG
-        printf("tag is: %d\n", tag);
+        //printf("tag is: %d\n", tag);
     #endif
     switch (tag) {
         case INT_INS : {
@@ -370,6 +378,9 @@ void runvm (VM* vm) {
             break;
         }
         case NULL_INS : {
+            #ifdef DEBUG
+                printf("null ins\n");
+            #endif
             VMValue* value = create_null(vm);
             vector_add(vm->stack, value);
             break;
@@ -378,7 +389,7 @@ void runvm (VM* vm) {
             int nargs = next_int(vm);
             char* str = next_ptr(vm);
             #ifdef DEBUG
-                printf("print ins with args: %d and string: %s\n", nargs, str);
+                printf("print: %d and str: %s\n", nargs, str);
             #endif
             void** args = malloc(sizeof(void*) * nargs);
             for (int i = 0; i< nargs; i++) {
@@ -407,19 +418,25 @@ void runvm (VM* vm) {
             int arity = next_int(vm);
             void* new_code = next_ptr(vm);
             #ifdef DEBUG
-                printf("calls ins with arity: %d and code: %p\n", arity, new_code);
+                printf("calls #%d and ptr: %p\n", arity, new_code);
             #endif
             vector_add(vm->fstack->stack, (void*) vm->fstack->fp);
             vector_add(vm->fstack->stack, vm->ip);
             vm->ip = new_code;
+            break;
         }
         case SET_LOCAL_INS : {
+            int idx = next_int(vm);
+            #ifdef DEBUG
+                printf("set local : %d\n", idx);
+            #endif
+            vector_set(vm->fstack->stack, vm->fstack->fp + 2 + idx, vector_peek(vm->stack));
             break;
         }
         case GET_LOCAL_INS : {
             int idx = next_int(vm);
             #ifdef DEBUG
-                printf("get local ins at idx: %d\n", idx);
+                printf("get local : %d\n", idx);
             #endif
             VMInt* value = vector_get(vm->fstack->stack, vm->fstack->fp + 2 + idx);
             vector_add(vm->stack, vector_get(vm->fstack->stack, vm->fstack->fp + 2 + idx));
@@ -432,9 +449,20 @@ void runvm (VM* vm) {
             break;
         }
         case BRANCH_INS : {
+            void* new_ptr = next_ptr(vm);
+            VMValue* value = vector_pop(vm->stack);
+            #ifdef DEBUG
+                printf("branch tag: %ld, ptr: %p\n", value->tag, new_ptr);
+            #endif
+            if(value->tag != VM_NULL) vm->ip = new_ptr;
             break;
         }
         case GOTO_INS : {
+            void* ptr = next_ptr(vm);
+            #ifdef DEBUG
+                printf("goto ins, ptr: %p\n", ptr);
+            #endif
+            vm->ip = ptr;
             break;
         }
         case RETURN_INS : {

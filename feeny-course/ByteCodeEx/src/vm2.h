@@ -32,7 +32,8 @@ typedef struct {
 } VM;
 
 typedef enum {
-    METHOD_ENTRY
+    METHOD_ENTRY,
+    LABEL_ENTRY,
 } TYPE_ENTRY;
 
 typedef struct {
@@ -42,6 +43,7 @@ typedef struct {
 
 typedef enum {
     FUNCTION_PATCH,
+    LABEL_PATCH,
 } PATCH_TYPE;
 
 typedef struct {
