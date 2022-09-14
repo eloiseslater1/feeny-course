@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "ht.h"
 #include "codebuffer.h"
-#include "heap.h"
 
 typedef struct {
     Vector* patch_buffer;
