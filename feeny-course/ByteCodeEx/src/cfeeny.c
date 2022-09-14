@@ -16,8 +16,6 @@ int main (int argc, char** argvs) {
   //Read in bytecode
   Program* p = load_bytecode(argvs[1]);
   interpret_bc(p);
-  //  initvm(link_program(p));
-  //  runvm();
   return 0;
 }
 

@@ -279,7 +279,7 @@ void print_value (Value* v) {
   }
   default:
     printf("Value with unknown tag: %d\n", v->tag);
-    exit(-1);
+    //exit(-1);
   }
 }
 

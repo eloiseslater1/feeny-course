@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "frame.h"
 
-//#define DEBUG
+#define DEBUG
 
 typedef struct {
     Vector* stack;
