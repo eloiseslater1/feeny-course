@@ -13,10 +13,6 @@ typedef struct {
     int fp;
 } StackFrame;
 
-typedef struct {
-    long tag;
-    long scratch;
-} VMNull;
 
 typedef struct {
     Vector* patch_buffer;
@@ -29,6 +25,7 @@ typedef struct {
     Vector* stack;
     Heap* heap;
     ht* inbuilt;
+    Vector* classes;
     char* ip;
     void** genv;
 } VM;
@@ -36,17 +33,23 @@ typedef struct {
 typedef enum {
     METHOD_ENTRY,
     LABEL_ENTRY,
+    CLASS_ENTRY,
 } TYPE_ENTRY;
 
 typedef struct {
     TYPE_ENTRY type;
-    int code_idx;
+    union {
+        int code_idx;
+        int class_idx;
+    };
 } Entry;
 
 typedef enum {
     FUNCTION_PATCH,
     LABEL_PATCH,
-    INT_PATCH
+    INT_PATCH,
+    CLASS_ARITY_PATCH,
+    CLASS_TAG_PATCH
 } PATCH_TYPE;
 
 typedef struct {
@@ -55,32 +58,6 @@ typedef struct {
     int name;
 } Patch;
 
-typedef enum {
-    VM_INT,
-    VM_NULL,
-    VM_ARRAY,
-} VM_TAG;
-
-typedef struct {
-    long tag;
-} VMValue;
-
-typedef struct {
-    long tag;
-    long value;
-} VMInt;
-
-typedef struct {
-    long tag;
-    void* parent;
-    void* slots[];
-} VMObj;
-
-typedef struct {
-    long tag;
-    int length;
-    void* items[];
-} VMArray;
 
 typedef enum {
   INT_INS,        //0
@@ -103,6 +80,25 @@ typedef enum {
   FRAME_INS       //11
 } OpTag;
 
+typedef enum {
+  VAR_SLOT,
+  CODE_SLOT
+} SlotTag;
+
+typedef struct {
+  SlotTag tag;
+  char* name;
+  union {
+    int idx;
+    void* code;
+  };
+} CSlot;
+
+typedef struct {
+  int nvars;
+  int nslots;
+  CSlot* slots;
+} CClass;
 
 
 void interpret_bc();

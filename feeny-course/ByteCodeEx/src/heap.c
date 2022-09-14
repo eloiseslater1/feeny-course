@@ -19,3 +19,27 @@ void* halloc (Heap* heap, long tag, int sz) {
   heap->sp += sz;
   return obj;
 }
+
+VMValue* create_null(Heap* heap) {
+  VMNull* null = (VMNull*) halloc(heap, VM_NULL, sizeof(VMNull));
+  return (VMValue*) null;
+}
+
+VMInt* create_int(Heap* heap, int a) {
+  VMInt* value = (VMInt*) halloc(heap, VM_INT, sizeof(VMInt));
+  value->value = a;
+  return value;
+}
+
+VMArray* create_array(Heap* heap, int length, int initial) {
+    VMArray* array = (VMArray*) halloc(heap, VM_ARRAY, sizeof(VMArray) + sizeof(void*) * length);
+    for (int i = 0; i < length; i++) {
+        array->items[i] = initial;
+    }
+    array->length = length;
+    return array;
+}
+
+VMObj* create_object(Heap* heap, int class, int arity) {
+  VMObj* obj = halloc(heap, class, sizeof(VMObj) + sizeof(void*) * arity);
+}
