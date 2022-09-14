@@ -17,7 +17,7 @@ Constants :
          printf #3 1
          return
    #6: Class(#5)
-   #7: String("base") ->global
+   #7: String("base")
    #8: Method(#7, nargs:0, nlocals:0) :
          lit #0
          object #6
@@ -29,8 +29,8 @@ Constants :
          call-slot #9 2
          return
    #11: Class(#10)
-   #12: String("adder") ->global
-   #13: Method(#12, nargs:0, nlocals:0) : 
+   #12: String("adder")
+   #13: Method(#12, nargs:0, nlocals:0) :
          call #7 0
          object #11
          return
@@ -41,15 +41,15 @@ Constants :
          call-slot #14 2
          return
    #16: Class(#15)
-   #17: String("multiplier") ->global
+   #17: String("multiplier")
    #18: Method(#17, nargs:0, nlocals:0) :
          call #7 0
          object #16
          return
-   #19: String("a") ->global
+   #19: String("a")
    #20: Slot(#19)
-   #21: String("m") ->global
-   #22: Slot(#21) 
+   #21: String("m")
+   #22: Slot(#21)
    #23: Int(11)
    #24: Int(7)
    #25: String("entry39")
@@ -78,70 +78,61 @@ Globals :
    #18
    #20
    #22
-Entry : #26      
-   call #12 0      
-   call #7 0      
-   lit #0      Null, 
-   object #6      Null, Class(#-1290377648, #-1290377040) 
-   return      Null, Class(#-1290377648, #-1290377040), 
-   object #11      Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
-   return      Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
-   set global #19      Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
-   drop      Null, Class(#-1290377648, #-1290377040), 
-   call #17 0      Null, Class(#-1290377648, #-1290377040), 
-   call #7 0      Null, Class(#-1290377648, #-1290377040), 
-   lit #0      Null, Class(#-1290377648, #-1290377040), Null, 
-   object #6      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   object #16      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
-   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
-   set global #21      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
-   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get global #19      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
-   lit #23      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), 
-   lit #24      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), Int(7), 
-   call-slot #4 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
-   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
-   printf #1 2
-Do a binary operation on 11 and 7.
-      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
-   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get local 0      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), 
-   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), 
-   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290376464, #-1290376272), Int(11), Int(7), 
-   call-slot #2 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
-   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
-   call-slot #9 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(18), 
-   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(18), 
-   printf #3 1
-Result = 18.
-      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
-   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
-   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get global #21      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
-   lit #23      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), 
-   lit #24      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), Int(7), 
-   call-slot #4 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
-   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
-   printf #1 2
-Do a binary operation on 11 and 7.
-      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
-   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get local 0      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), 
-   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), 
-   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Class(#-1290375760, #-1290375488), Int(11), Int(7), 
-   call-slot #2 3      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   get local 1      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), 
-   get local 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(11), Int(7), 
-   call-slot #14 2      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(77), 
-   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Int(77), 
-   printf #3 1
-Result = 77.
-      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
-   return      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
-   drop      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), 
-   lit #0      Null, Class(#-1290377648, #-1290377040), Null, Class(#-1290377648, #-1290377040), Null, 
-   return
+Entry : #26   get local 1   get local 2   printf #1 2   drop   get local 0   get local 1   get local 2   call-slot #2 3   printf #3 1   return   lit #0   object #6   return   get local 1   get local 2   call-slot #9 2   return   call #7 0   object #11   return   get local 1   get local 2   call-slot #14 2   return   call #7 0   object #16   return   call #12 0   set global #19   drop   call #17 0   set global #21   drop   get global #19   lit #23   lit #24   call-slot #4 3   drop   get global #21   lit #23   lit #24   call-slot #4 3   drop   lit #0   returnSTACK: 
+frame ins
+STACK: 
+calls #0 and ptr: 0x7fee3000c0d4
+STACK: 
+frame ins
+STACK: 
+calls #0 and ptr: 0x7fee3000c084
+STACK: 
+frame ins
+STACK: 
+null ins
+STACK: null, 
+object 
+STACK: Class #3
+return ins
+STACK: Class #3
+object 
+STACK: Class #4
+return ins
+STACK: Class #4
+set global : 0
+STACK: Class #4
+drop ins
+STACK: 
+calls #0 and ptr: 0x7fee3000c134
+STACK: 
+frame ins
+STACK: 
+calls #0 and ptr: 0x7fee3000c084
+STACK: 
+frame ins
+STACK: 
+null ins
+STACK: null, 
+object 
+STACK: Class #3
+return ins
+STACK: Class #3
+object 
+STACK: Class #5
+return ins
+STACK: Class #5
+set global : 1
+STACK: Class #5
+drop ins
+STACK: 
+get global : 0
+STACK: Class #4
+int ins: tag: 0, val: 11
+STACK: Class #4int: 11, 
+int ins: tag: 0, val: 7
+STACK: Class #4int: 11, int: 7, 
+call-op #3 and str: do-op
+STACK: Class #4int: 11, int: 7, 
+array
+STACK: Class #4(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, )Class #2
+Unknown tag: 25

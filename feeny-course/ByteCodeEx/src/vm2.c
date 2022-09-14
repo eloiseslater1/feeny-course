@@ -134,7 +134,7 @@ CSlot get_slot(VM* vm, VMObj* obj, char* name) {
         CSlot slot = class->slots[i];
         if (strcmp(name, slot.name) == 0) return slot;
     }
-    get_slot(vm, obj->parent, name);
+    return get_slot(vm, obj->parent, name);
 }
 
 //---------------------------------------------------------------------------
@@ -559,7 +559,7 @@ void runvm (VM* vm) {
             int arity = next_int(vm);
             int class = next_int(vm);
             #ifdef DEBUG
-                printf("array\n");
+                printf("object \n");
             #endif
             VMObj* obj = create_object(vm->heap, class, arity);
             for (int i = arity - 1; i >= 0; i--) {
