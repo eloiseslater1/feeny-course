@@ -11,7 +11,7 @@ void init_genv(VM* vm, int globals_size);
 void runvm (VM* vm);
 Heap* init_heap();
 void free_heap(Heap* heap);
-VMValue* create_null(Heap* heap);
+VMValue* create_null(VM* vm);
 
 VM* init_vm(VMInfo* vm_info) {
     VM* vm = malloc(sizeof(VM));
@@ -20,7 +20,7 @@ VM* init_vm(VMInfo* vm_info) {
     vm->fstack = init_frame();
     vm->stack = make_vector();
     vm->heap = init_heap();
-    vm->null = create_null(vm->heap);
+    vm->null = create_null(vm);
     vm->inbuilt = init_builtins();
     vm->ip = vm_info->ip;
     init_genv(vm, vm_info->globals_size);
@@ -139,10 +139,10 @@ void add_frame(VM* vm) {
 //---------------------------------------------------------------------------
 //--------------------------------heap------------------------------------
 //---------------------------------------------------------------------------
-
+void run_gc(VM* vm);
 Heap* init_heap() {
     Heap* heap = malloc(sizeof(Heap));
-    heap->size = MB * 100;
+    heap->size = MB * 10;
     heap->memory = malloc(heap->size);
     heap->head = heap->memory + heap->size;
     heap->sp = heap->memory;
@@ -154,30 +154,31 @@ void free_heap(Heap* heap) {
     free(heap);
 }
 
-void* halloc (Heap* heap, long tag, int sz) {
-  if(heap->sp + sz > heap->head){
+void* halloc (VM* vm, long tag, int sz) {
+  if(vm->heap->sp + sz > vm->heap->head){
       printf("Out of Memory.\n");
+      run_gc(vm);
       exit(-1);
     }
-  long* obj = (long*)heap->sp;
+  long* obj = (long*)vm->heap->sp;
   obj[0] = tag;
-  heap->sp += sz;
+  vm->heap->sp += sz;
   return obj;
 }
 
-VMValue* create_null(Heap* heap) {
-  VMNull* null = (VMNull*) halloc(heap, VM_NULL, sizeof(VMNull));
+VMValue* create_null(VM* vm) {
+  VMNull* null = (VMNull*) halloc(vm, VM_NULL, sizeof(VMNull));
   return (VMValue*) null;
 }
 
-VMInt* create_int(Heap* heap, int a) {
-  VMInt* value = (VMInt*) halloc(heap, VM_INT, sizeof(VMInt));
+VMInt* create_int(VM* vm, int a) {
+  VMInt* value = (VMInt*) halloc(vm, VM_INT, sizeof(VMInt));
   value->value = a;
   return value;
 }
 
-VMArray* create_array(Heap* heap, int length, int initial) {
-    VMArray* array = (VMArray*) halloc(heap, VM_ARRAY, sizeof(VMArray) + sizeof(void*) * length);
+VMArray* create_array(VM* vm, int length, int initial) {
+    VMArray* array = (VMArray*) halloc(vm, VM_ARRAY, sizeof(VMArray) + sizeof(void*) * length);
     for (int i = 0; i < length; i++) {
         array->items[i] = initial;
     }
@@ -185,8 +186,40 @@ VMArray* create_array(Heap* heap, int length, int initial) {
     return array;
 }
 
-VMObj* create_object(Heap* heap, int class, int arity) {
-  VMObj* obj = halloc(heap, class, sizeof(VMObj) + sizeof(void*) * arity);
+VMObj* create_object(VM* vm, int class, int arity) {
+  VMObj* obj = halloc(vm, class, sizeof(VMObj) + sizeof(void*) * arity);
+}
+//---------------------------------------------------------------------------
+//--------------------------------run gc------------------------------------
+//---------------------------------------------------------------------------
+void scan_stack(VM* vm){
+    for (int i = 0; i < vm->stack->size; i++) {
+        void* ptr = vector_get(vm->stack, i);
+        printf("stack pointer at %i is: %p and in heap: %d\n", i, ptr, check_within_heap(vm->heap, ptr));
+    }
+}
+
+void scan_stack_frame(VM* vm) {
+    for (int i = 0; i < vm->fstack->stack->size; i++) {
+        void* ptr = vector_get(vm->fstack->stack, i);
+        printf("frame pointer at %i is: %p and in heap: %d\n", i, ptr, check_within_heap(vm->heap, ptr)); 
+    }
+}
+
+void scan_root_set(VM* vm) {
+    printf("start of heap is: %p\n", vm->heap->memory);
+    printf("end of heap is: %p\n", vm->heap->head);
+    scan_stack(vm);
+    scan_stack_frame(vm);
+}
+
+int check_within_heap(Heap* heap, void* pointer) {
+    if (pointer >= heap->memory && pointer <= heap->head) return 1;
+    return 0;
+}
+
+void run_gc(VM* vm) {
+    scan_root_set(vm);
 }
 
 //---------------------------------------------------------------------------
@@ -225,7 +258,7 @@ void runvm (VM* vm) {
     #endif
     switch (tag) {
         case INT_INS : {
-            VMInt* value = create_int(vm->heap, next_int(vm));
+            VMInt* value = create_int(vm, next_int(vm));
             #ifdef DEBUG
                 printf("int ins: tag: %ld, val: %ld\n", value->tag, value->value);
             #endif
@@ -236,7 +269,7 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("null ins\n");
             #endif
-            VMValue* value = create_null(vm->heap);
+            VMValue* value = create_null(vm);
             vector_add(vm->stack, value);
             break;
         }
@@ -261,7 +294,7 @@ void runvm (VM* vm) {
             #endif
             VMInt* intial = vector_pop(vm->stack);
             VMInt* length = vector_pop(vm->stack);
-            vector_add(vm->stack, create_array(vm->heap, length->value, intial->value));
+            vector_add(vm->stack, create_array(vm, length->value, intial->value));
             break;
         }
         case OBJECT_INS: {
@@ -270,7 +303,7 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("object \n");
             #endif
-            VMObj* obj = create_object(vm->heap, class, arity);
+            VMObj* obj = create_object(vm, class, arity);
             for (int i = arity - 1; i >= 0; i--) {
                 obj->slots[i] = vector_pop(vm->stack);
             }
@@ -429,10 +462,10 @@ void runvm (VM* vm) {
 
 VMValue* create_null_or_int(VM* vm, long a) {
   if (a) {
-    return (VMValue*) create_int(vm->heap, a);
+    return (VMValue*) create_int(vm, a);
   }
   else {
-    return create_null(vm->heap);
+    return create_null(vm);
   }
 }
 
@@ -448,31 +481,31 @@ VMValue* fe_get(VM* vm, void** args) {
   int pos = ((VMInt*) args[1])->value;
   VMArray* array = args[0];
   int value = array->items[pos];
-  return (VMValue*) create_int(vm->heap, value);
+  return (VMValue*) create_int(vm, value);
 }
 
 VMValue* fe_len(VM* vm, void** args) {
-  return (VMValue*) create_int(vm->heap, ((VMArray* ) args[0])->length);
+  return (VMValue*) create_int(vm, ((VMArray* ) args[0])->length);
 }
 
 VMValue* fe_add(VM* vm, void** args) {
-  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value + ((VMInt*) args[1])->value);
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value + ((VMInt*) args[1])->value);
 }
 
 VMValue* fe_sub(VM* vm, void** args) {
-  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value - ((VMInt*) args[1])->value);
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value - ((VMInt*) args[1])->value);
 }
 
 VMValue* fe_mult(VM* vm, void** args) {
-  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value * ((VMInt*) args[1])->value);
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value * ((VMInt*) args[1])->value);
 }
 
 VMValue* fe_div(VM*vm, void** args) {
-  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value / ((VMInt*) args[1])->value);
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value / ((VMInt*) args[1])->value);
 }
 
 VMValue* fe_mod(VM* vm, void** args) {
-  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value % ((VMInt*) args[1])->value);
+  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value % ((VMInt*) args[1])->value);
 }
 
 VMValue* fe_lt(VM* vm, void** args) {
