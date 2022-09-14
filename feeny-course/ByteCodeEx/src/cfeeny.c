@@ -3,7 +3,7 @@
 #include<string.h>
 #include "utils.h"
 #include "bytecode.h"
-#include "vm2.h"
+#include "vm.h"
 
 
 int main (int argc, char** argvs) {
@@ -16,8 +16,6 @@ int main (int argc, char** argvs) {
   //Read in bytecode
   Program* p = load_bytecode(argvs[1]);
   interpret_bc(p);
-  //  initvm(link_program(p));
-  //  runvm();
   return 0;
 }
 

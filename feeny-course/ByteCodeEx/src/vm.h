@@ -1,57 +1,26 @@
-#ifndef VM_H
-#define VM_H
+#ifndef VM2_H
+#define VM2_H
 
-#include "bytecode.h"
-#include "ht.h"
-#include "utils.h"
-#include "frame.h"
-
-//#define DEBUG
+#include "quicken.h"
+#include "heap.h"
 
 typedef struct {
     Vector* stack;
-    ht* hm;
-    ht* labels;
+    int fp;
+} StackFrame;
+
+typedef struct {
+    Vector* classes;
+    Code* code_buffer;
+    StackFrame* fstack;
+    VMNull* null;
+    Vector* stack;
+    Heap* heap;
     ht* inbuilt;
-    Vector* globals;
-    Frame* current_frame;
-    Vector* const_pool;
-    void** IP;
+    char* ip;
+    void** genv;
 } VM;
 
-void interpret_bc (Program* prog);
-VM* init_vm(Program* p);
-
-typedef enum {
-    VM_INT,
-    VM_NULL,
-    VM_ARRAY,
-} VM_TAG;
-
-typedef struct {
-    long tag;
-} VMValue;
-
-typedef struct {
-    long tag;
-    long value;
-} VMInt;
-
-typedef struct {
-    long tag;
-    long null;
-} VMNull;
-
-typedef struct {
-    long tag;
-    void* parent;
-    void* slots[];
-} VMObj;
-
-typedef struct {
-    long tag;
-    int length;
-    void* items[];
-} VMArray;
+void interpret_bc (Program* p);
 
 #endif

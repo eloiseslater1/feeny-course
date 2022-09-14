@@ -47,6 +47,7 @@ typedef struct {
 } VMArray;
 
 Heap* init_heap();
+void free_heap(Heap* heap);
 void* halloc (Heap* heap, long tag, int sz);
 VMValue* create_null(Heap* heap);
 VMInt* create_int(Heap* heap, int a);

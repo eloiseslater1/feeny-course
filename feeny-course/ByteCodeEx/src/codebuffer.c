@@ -13,6 +13,11 @@ Code* init_code_buffer() {
     return code_buffer;
 }
 
+void free_code_buffer(Code* code_buffer) {
+  free(code_buffer->code);
+  free(code_buffer);
+}
+
 void check_size(Code* code_buffer) {
   int size = code_buffer->sp - code_buffer->code;
   if (size + 2 * sizeof(long) > code_buffer->capacity) {

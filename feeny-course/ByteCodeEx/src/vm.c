@@ -1,491 +1,443 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<sys/mman.h>
 
 #include "vm.h"
 
-void add_globals(VM* vm, Vector* globals);
-void interpret(ht*, int entry_point);
-void run(VM* vm);
-void add_labels(ht* hm, Vector* const_pool);
-
-void op_return(VM* vm);
-void op_drop(VM* vm);
-void op_goto(VM* vm, GotoIns* i);
-void op_branch(VM* vm, BranchIns* i);
-void op_get_global(VM* vm, GetGlobalIns* i);
-void op_set_global(VM* vm, SetGlobalIns* i);
-void op_get_local(VM* vm, GetLocalIns* i);
-void op_set_local(VM* vm, SetLocalIns* i);
-void op_call(VM* vm, CallIns* i);
-void op_call_slot(VM* vm, CallSlotIns* i);
-void op_set_slot(VM* vm, SetSlotIns* i);
-void op_slot(VM* vm, SlotIns* i);
-void op_object(VM* vm, ObjectIns* i);
-void op_array(VM* vm);
-void op_print(VM* vm, PrintfIns* i);
-void op_lit(VM* vm, LitIns* i);
-
-MethodValue* search_class_for_method(VM* vm, VMObj* class, int method_name);
-VMValue* fe_set(void** args);
-VMValue* fe_get(void** args);
-VMValue* fe_len(void** args);
-VMValue* fe_add(void** args);
-VMValue* fe_sub(void** args);
-VMValue* fe_mult(void** args);
-VMValue* fe_div(void** args);
-VMValue* fe_mod(void** args);
-VMValue* fe_lt(void** args);
-VMValue* fe_le(void** args);
-VMValue* fe_gt(void** args);
-VMValue* fe_ge(void** args);
-VMValue* fe_eq(void** args);
-VMValue* create_int(int a);
-VMValue* create_null_or_int(long a);
-VMValue* create_null();
+//---------------------------------------------------------------------------
+//--------------------------------init_vm------------------------------------
+//---------------------------------------------------------------------------
+StackFrame* init_frame();
+void free_frame(StackFrame* stack_frame);
 ht* init_builtins();
-VMValue* format_print(StringValue* format_string, void** args);
+void init_genv(VM* vm, int globals_size);
+void runvm (VM* vm);
 
+VM* init_vm(VMInfo* vm_info) {
+    VM* vm = malloc(sizeof(VM));
+    vm->classes = vm_info->classes;
+    vm->code_buffer = vm_info->code_buffer;
+    vm->fstack = init_frame();
+    vm->stack = make_vector();
+    vm->heap = init_heap();
+    vm->null = create_null(vm->heap);
+    vm->inbuilt = init_builtins();
+    vm->ip = vm_info->ip;
+    init_genv(vm, vm_info->globals_size);
+    return vm;
+}
 
-//---------------------------------------------------------------------------
-//--------------------------------memory-------------------------------------
-//---------------------------------------------------------------------------
-#define MB (1024 * 1024);
-
-
-
-//---------------------------------------------------------------------------
-//-------------------------------init-vm-------------------------------------
-//---------------------------------------------------------------------------
-
-
-VM* init_vm(Program* p) {
-  VM* vm = malloc(sizeof(VM));
-  vm->stack = make_vector();
-  vm->hm = ht_create();
-  vm->labels = ht_create();
-  vm->inbuilt = init_builtins();
-  vm->globals = make_vector();
-  vm->const_pool = p->values;
-  add_globals(vm, p->slots);
-  add_labels(vm->labels, p->values);
-  MethodValue* entry_func = (MethodValue*) vector_get(p->values, p->entry);
-  vm->IP = &entry_func->code->array[0];
-  vm->current_frame =  make_frame(entry_func->nargs + entry_func->nlocals, 
-                                  NULL, 
-                                  vm->IP);
-  print_prog(p);
-  return vm;
+void init_genv(VM* vm, int globals_size) {
+    vm->genv = malloc(sizeof(void*) * globals_size);
+    for (int i = 0; i < globals_size; i++) {
+        vm->genv[i] = vm->null;
+    }
 }
 
 void free_vm(VM* vm) {
-  ht_destroy(vm->hm);
-  ht_destroy(vm->inbuilt);
-  ht_destroy(vm->labels);
-  destroy_frame(vm->current_frame);
-  vector_free(vm->stack);
-  vector_free(vm->const_pool);
-  free(vm->IP);
-  free(vm);
+    vector_free(vm->classes);
+    free_code_buffer(vm->code_buffer);
+    free_frame(vm->fstack);
+    vector_free(vm->stack);
+    free_heap(vm->heap);
+    ht_destroy(vm->inbuilt);
+    free(vm->genv);
+    free(vm);
 }
 
-void interpret_bc (Program* p) {
-  #ifdef DEBUG
-    printf("Interpreting Bytecode Program:\n");
-    print_prog(p);
-  #endif
-  VM* vm = init_vm(p);
-  run(vm);
-  free(vm);
+void interpret_bc(Program* program) {
+    VMInfo* info = quicken_vm(program);
+    VM* vm = init_vm(info);
+    runvm(vm);
+    free_vm(vm);
 }
 
-void add_labels(ht* hm, Vector* const_pool) {
-  for (int i = 0; i < const_pool->size; i++) {
-    Value* value = (Value*) vector_get(const_pool, i);
-    if (value->tag == METHOD_VAL) {
-      MethodValue* method = (MethodValue*) value;
-      for (int j = 0; j < method->code->size; j++) {
-        ByteIns* ins = vector_get(method->code, j);
-        if (ins->tag == LABEL_OP) {
-          char* key =  ((StringValue*)(vector_get(const_pool, ((LabelIns*)ins)->name)))->value;
-          ByteIns* ins = (ByteIns*) method->code->array[j];
-          ht_set(hm, key, &method->code->array[j]);
+
+
+//---------------------------------------------------------------------------
+//===================== Classes ==================================================
+//---------------------------------------------------------------------------
+
+CSlot get_slot(VM* vm, VMObj* obj, char* name) {
+    CClass* class = vector_get(vm->classes, obj->tag);
+    for (int i = 0; i < class->nslots; i++) {
+        CSlot slot = class->slots[i];
+        if (strcmp(name, slot.name) == 0) return slot;
+    }
+    return get_slot(vm, obj->parent, name);
+}
+
+//---------------------------------------------------------------------------
+//===================== VM ==================================================
+//---------------------------------------------------------------------------
+
+unsigned char next_char (VM* vm) {
+  unsigned char c = vm->ip[0];
+  vm->ip++;
+  return c;
+}
+
+int next_short (VM* vm) {
+  vm->ip = (char*)(((long)vm->ip + 1)&(-2));
+  int s = ((unsigned short*)vm->ip)[0];  
+  vm->ip += 2;
+  return s;
+}
+
+int next_int (VM* vm) {
+  vm->ip = (char*)(((long)vm->ip + 3)&(-4));
+  int s = ((int*)vm->ip)[0];  
+  vm->ip += 4;
+  return s;
+}
+
+void* next_ptr (VM* vm) {
+  vm->ip = (char*)(((long)vm->ip + 7)&(-8));
+  void* s = ((void**)vm->ip)[0];  
+  vm->ip += 8;
+  return s;
+}
+
+void* format_print(char* string, void **args) {
+    int i = 0;
+    while (*string != '\0') {
+        if (*string == '~') {
+            printf("%ld", ((VMInt*) args[i])->value);
+            string++;
+            i++;
         }
-      }
+        printf("%c", *string);
+        string++;
     }
-  }
 }
-
-char* add_global_ht(VM* vm, int name_idx, void* value_idx) {
-  char* name = ((StringValue*)vector_get(vm->const_pool, name_idx))->value;
-  ht_set(vm->hm, name, value_idx);
-  return name;
-}
-
-void add_globals(VM* vm, Vector* globals) {
-  for (int i = 0; i < globals->size; i++) {
-    void* value_idx = vector_get(vm->const_pool, (int)vector_get(globals, i));
-    if (((Value*) value_idx)->tag == SLOT_VAL) {
-      vector_add(vm->globals, add_global_ht(vm, ((SlotValue*) value_idx)->name, value_idx));
-     } else {
-      add_global_ht(vm, ((MethodValue*) value_idx)->name, value_idx);
-     } 
-  }
-}
-
 //---------------------------------------------------------------------------
-//--------------------------------Frames-------------------------------------
+//--------------------------------StackFrame------------------------------------
 //---------------------------------------------------------------------------
 
 
+StackFrame* init_frame() {
+    StackFrame* frame = malloc(sizeof(StackFrame));
+    frame->stack = make_vector();
+    frame->fp = 0;
+}
+
+void free_frame(StackFrame* stack_frame) {
+    vector_free(stack_frame->stack);
+    free(stack_frame);
+}
+
+void add_frame(VM* vm) {
+    int nargs = next_int(vm);
+    int nlocals = next_int(vm);
+    vm->fstack->fp = (vm->fstack->stack->size > 0) ? vm->fstack->stack->size - 2 : 0; //size = 9, fp = 7
+    vector_set_length(vm->fstack->stack, vm->fstack->stack->size + nargs + nlocals, vm->null);
+    for (int i = nargs; i > 0; i--) {
+        vector_set(vm->fstack->stack, vm->fstack->fp + 1 + i, vector_pop(vm->stack));
+    }
+}
 
 //---------------------------------------------------------------------------
-//--------------------------------OP Functions-------------------------------
+//--------------------------------run vm------------------------------------
 //---------------------------------------------------------------------------
 
-void op_return(VM* vm) {
-  if (vm->current_frame->parent != NULL) {
-    Frame* old_frame = vm->current_frame;
-    vm->IP = vm->current_frame->return_address;
-    vm->current_frame = vm->current_frame->parent;
-    destroy_frame(old_frame);
-  } else {
-    exit(1);
-  }
-}
-
-void op_drop(VM* vm) {
-  vector_pop(vm->stack);
-  vm->IP++;
-}
-
-void op_goto(VM* vm, GotoIns* i) {
-  StringValue* value = vector_get(vm->const_pool, i->name);
-  vm->IP = ht_get(vm->labels, value->value);
-}
-
-void op_branch(VM* vm, BranchIns* i) {
-  Value* value = vector_pop(vm->stack);
-  if (value->tag == VM_NULL) {
-    vm->IP++;
-    return;
-  }
-  StringValue* label = vector_get(vm->const_pool, i->name);
-  vm->IP = ht_get(vm->labels, label->value);
-}
-
-void op_get_global(VM* vm, GetGlobalIns* i) {
-  StringValue* string = vector_get(vm->const_pool, i->name);
-  // i_name idx to const pool for str. 
-  vector_add(vm->stack, ht_get(vm->hm, string->value));
-  vm->IP++;
-}
-
-void op_set_global(VM* vm, SetGlobalIns* i) {
-  StringValue* string = vector_get(vm->const_pool, i->name);
-  ht_set(vm->hm, string->value, vector_peek(vm->stack));
-  vm->IP++;
-}
-
-void op_get_local(VM* vm, GetLocalIns* i) {
-  vector_add(vm->stack, vm->current_frame->variables[i->idx]);
-  vm->IP++;
-}
-
-void op_set_local(VM* vm, SetLocalIns* i) {
-  vm->current_frame->variables[i->idx] = vector_peek(vm->stack);
-  vm->IP++;
-}
-
-void op_call(VM* vm, CallIns* i) {
-  MethodValue* method = ht_get(vm->hm, ((StringValue*) vector_get(vm->const_pool, i->name))->value);
-  vm->current_frame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
-  for (int j = 0; j < i->arity; j++) {
-    vm->current_frame->variables[i->arity - j - 1] = vector_pop(vm->stack);
-  }
-  vm->IP = &method->code->array[0];
-} 
-
-void op_call_slot(VM* vm, CallSlotIns* i) {
-  char* method_name = ((StringValue*) vector_get(vm->const_pool, i->name))->value;
-  void** args = malloc(sizeof(void*) * i->arity);
-  for (int j = 0; j < i->arity; j++) {
-      args[i->arity - j - 1] = vector_pop(vm->stack);
-  }
-  switch (((VMValue*)args[0])->tag) {
-    case (VM_ARRAY):
-    case (VM_INT): {
-      VMValue* (*func)(void**) = ht_get(vm->inbuilt, method_name);
-      VMValue* return_value = (*func)(args); 
-      vector_add(vm->stack, return_value);
-      vm->IP++;
-      free(args);
-      break;
-    }
-    default: {
-      VMObj* object = args[0];
-      MethodValue* method = search_class_for_method(vm, object, i->name);
-      Frame* newFrame = make_frame(method->nargs + method->nlocals, vm->current_frame, vm->IP+1);
-      for (int j = 0; j < i->arity; j++) {
-        newFrame->variables[j] = args[j];
-      }
-      vm->current_frame = newFrame;
-      vm->IP = &method->code->array[0];
-      free(args);
-      break;
-    }
-  }
-}
-
-void op_set_slot(VM* vm, SetSlotIns* i) {
-  void* valToStore = vector_pop(vm->stack);
-  VMObj* object = vector_pop(vm->stack);
-  int varIdx = search_for_slot_idx(vm, object, i->name);
-  object->slots[varIdx] = valToStore;
-  vector_add(vm->stack, valToStore);
-  vm->IP++;
-}
-
-void op_slot(VM* vm, SlotIns* i) {
-  VMObj* object = vector_pop(vm->stack);
-  int varIdx = search_for_slot_idx(vm, object, i->name);
-  vector_add(vm->stack, object->slots[varIdx]);
-  vm->IP++;
-}
-
-void op_object(VM* vm, ObjectIns* ins) {
-  ClassValue* class = (ClassValue* ) vector_get(vm->const_pool, ins->class);
-  VMObj* obj = NULL;
-  for (int i = 0; i< class->slots->size; i++) {
-    int j = 1;
-    int pool_idx = (int) vector_get(class->slots, class->slots->size - i - 1);
-    Value* slot = (Value* ) vector_get(vm->const_pool, pool_idx);
-    if (slot->tag == METHOD_VAL) {
-    } else {
-      if (obj == NULL) {
-        obj = malloc(sizeof(VMObj) + (sizeof(void*) * (class->slots->size - i)));
-      }
-      obj->slots[class->slots->size - i - j] = vector_pop(vm->stack);
-      j++;
-    }
-  }
-  if (obj == NULL) obj = malloc(sizeof(VMObj));
-  obj->parent = vector_pop(vm->stack);
-  obj->tag = ins->class;
-  vector_add(vm->stack, obj);
-  vm->IP++;
-}
-
-void op_array(VM* vm) {
-  VMInt* initial = vector_pop(vm->stack);
-  VMInt* len = vector_pop(vm->stack);
-  VMArray* array = malloc(sizeof(VMArray) + (sizeof(void*) * len->value));
-  for (int i = 0; i < len->value; i++) {
-    array->items[i] = initial->value;
-  }
-  array->tag = VM_ARRAY;
-  array->length = len->value;
-  vector_add(vm->stack, array);
-  vm->IP++;
-}
-
-void op_print(VM* vm, PrintfIns* i) {
-  StringValue* string_format = vector_get(vm->const_pool, i->format);
-  void** args = malloc(sizeof(void*) * i->arity);
-  for (int j = 0; j < i->arity; j++) {
-    args[i->arity - j - 1] = vector_pop(vm->stack);
-  }
-  VMValue* null = format_print(string_format, args);
-  vector_add(vm->stack, null);
-  vm->IP++;
-}
-
-void op_lit(VM* vm, LitIns* i) {
-  Value* value = vector_get(vm->const_pool, i->idx);
-  VMValue* lit = (value->tag == NULL_VAL) ? create_null() : create_int(((IntValue*) value)->value);
-  vector_add(vm->stack, lit);
-  vm->IP++;
-}
-
-void run(VM* vm) {
-  while(vm->IP != NULL) {
-    ByteIns* ins = (ByteIns*) *vm->IP;
+void runvm (VM* vm) {  
+  while (vm->ip) {
+    int tag = next_int(vm);
+    //printf("tag is: %d", tag);
     #ifdef DEBUG
-      printf("\n");
+        printf("STACK: ");
+        for (int i = 0; i < vm->stack->size; i++) {
+            VMValue* value = vector_get(vm->stack, i);
+            switch(value->tag) {
+                case (VM_INT): {
+                    printf("int: %ld, ", ((VMInt*) value)->value);
+                    break;
+                } case (NULL_VAL): {
+                    printf("null, ", ((VMInt*) value)->value);
+                    break;
+                } case (VM_ARRAY): {
+                    VMArray* array = (VMArray*) value;
+                    printf("(");
+                    for(int i = 0; i < array->length; i++) {
+                        printf("%d, ", (int) array->items[i]);
+                    }
+                    printf(")");
+                } default :{
+                    VMObj* obj = (VMObj*) value;
+                    printf("Class #%ld", obj->tag);
+                }
+            }
+            }
+        printf("\n");
     #endif
-    switch(ins->tag) {
-      case LABEL_OP: {
-        LabelIns* i = (LabelIns*)ins;
-        #ifdef DEBUG
-          printf("label #%d", i->name);
-        #endif
-        vm->IP++;
-        break;
-      }
-      case LIT_OP: {
-        LitIns* i = (LitIns*)ins;
-        #ifdef DEBUG
-          printf("   lit #%d", i->idx);
-        #endif
-        op_lit(vm, i);
-        break;
-      }
-      case PRINTF_OP: {
-        PrintfIns* i = (PrintfIns*)ins;
-        #ifdef DEBUG
-          printf("   printf #%d %d", i->format, i->arity);
-        #endif
-        op_print(vm, i);
-        break;
-      }
-      case ARRAY_OP: {
-        #ifdef DEBUG
-          printf("   array");
-        #endif
-        op_array(vm);
-        break;
-      }
-      case OBJECT_OP: {
-        ObjectIns* i = (ObjectIns*)ins;
-        #ifdef DEBUG
-          printf("   object #%d", i->class);
-        #endif
-        op_object(vm, i);
-        break;
-      }
-      case SLOT_OP: {
-        SlotIns* i = (SlotIns*)ins;
-        #ifdef DEBUG
-          printf("   slot #%d", i->name);
-        #endif
-        op_slot(vm, i);
-        break;
-      }
-      case SET_SLOT_OP: {
-        SetSlotIns* i = (SetSlotIns*)ins;
-        #ifdef DEBUG
-          printf("   set-slot #%d", i->name);
-        #endif
-        op_set_slot(vm, i);
-        break;
-      }
-      case CALL_SLOT_OP: {
-        CallSlotIns* i = (CallSlotIns*)ins;
-        #ifdef DEBUG
-          printf("   call-slot #%d %d", i->name, i->arity);
-        #endif
-        op_call_slot(vm, i);
-        break;
-      }
-      case CALL_OP: {
-        CallIns* i = (CallIns*)ins;
-        #ifdef DEBUG
-          printf("   call #%d %d", i->name, i->arity);
-        #endif
-        op_call(vm, i);
-        break;
-      }
-      case SET_LOCAL_OP: {
-        SetLocalIns* i = (SetLocalIns*)ins;
-        #ifdef DEBUG
-          printf("   set local %d", i->idx);
-        #endif
-        op_set_local(vm, i);
-        break;
-      }
-      case GET_LOCAL_OP: {
-        GetLocalIns* i = (GetLocalIns*)ins;
-        #ifdef DEBUG
-          printf("   get local %d", i->idx);
-        #endif
-        op_get_local(vm, i);
-        break;
-      }
-      case SET_GLOBAL_OP: {
-        SetGlobalIns* i = (SetGlobalIns*)ins;
-        #ifdef DEBUG
-          printf("   set global #%d", i->name);
-        #endif
-        op_set_global(vm, i);
-        break;
-      }
-      case GET_GLOBAL_OP: {
-        GetGlobalIns* i = (GetGlobalIns*)ins;
-        #ifdef DEBUG
-          printf("   get global #%d", i->name);
-        #endif
-        op_get_global(vm, i);
-        break;
-      }
-      case BRANCH_OP: {
-        BranchIns* i = (BranchIns*)ins;
-        #ifdef DEBUG
-          printf("   branch #%d", i->name);
-        #endif
-        op_branch(vm, i);
-        break;
-      }
-      case GOTO_OP: {
-        GotoIns* i = (GotoIns*)ins;
-        #ifdef DEBUG
-          printf("   goto #%d", i->name);
-        #endif
-        op_goto(vm, i);
-        break;
-      }
-      case RETURN_OP: {
-        #ifdef DEBUG
-          printf("   return");
-        #endif
-        op_return(vm);
-        break;
-      }
-      case DROP_OP: {
-        #ifdef DEBUG
-          printf("   drop");
-        #endif
-        op_drop(vm);
-        break;
-      }
-      default: {
-        printf("Unknown instruction with tag: %u\n", ins->tag);
-        exit(-1);
-      }
-    }
-  }
-}
-
-//===================== UTILS ================================
-
-MethodValue* search_class_for_method(VM* vm, VMObj* object, int method_name) {
-    ClassValue* class = vector_get(vm->const_pool, object->tag);
-    for (int j = 0; j < class->slots->size; j++) {
-      int idx = (int) vector_get(class->slots, class->slots->size - j - 1);
-      Value* value = vector_get(vm->const_pool, idx);
-      if (value->tag == METHOD_VAL) {
-        MethodValue* methodVal = (MethodValue* ) value;
-        if (methodVal->name == method_name) {
-          return methodVal;
+    switch (tag) {
+        case INT_INS : {
+            VMInt* value = create_int(vm->heap, next_int(vm));
+            #ifdef DEBUG
+                printf("int ins: tag: %ld, val: %ld\n", value->tag, value->value);
+            #endif
+            vector_add(vm->stack, value);
+            break;
         }
-      }
-    }
-    search_class_for_method(vm, (VMObj*) vector_peek(object->parent), method_name);
-}
-
-int search_for_slot_idx(VM* vm, VMObj* object, int name) {
-  ClassValue* class = (ClassValue*) vector_get(vm->const_pool, object->tag);
-  for (int i = 0; i < class->slots->size; i++) {
-    int parIdx = (int) vector_get(class->slots, i);
-    SlotValue* parName = (SlotValue*) vector_get(vm->const_pool, parIdx);
-    if (parName->name == name) {
-      return i;
-    }
+        case NULL_INS : {
+            #ifdef DEBUG
+                printf("null ins\n");
+            #endif
+            VMValue* value = create_null(vm->heap);
+            vector_add(vm->stack, value);
+            break;
+        }
+        case PRINTF_INS : {
+            int nargs = next_int(vm);
+            char* str = next_ptr(vm);
+            #ifdef DEBUG
+                printf("print: %d and str: %s\n", nargs, str);
+            #endif
+            void** args = malloc(sizeof(void*) * nargs);
+            for (int i = 0; i< nargs; i++) {
+                args[nargs - i- 1] =  vector_pop(vm->stack);
+            }
+            format_print(str, args);
+            free(args);
+            vector_add(vm->stack, vm->null);
+            break;
+        }
+        case ARRAY_INS : {
+            #ifdef DEBUG
+                printf("array\n");
+            #endif
+            VMInt* intial = vector_pop(vm->stack);
+            VMInt* length = vector_pop(vm->stack);
+            vector_add(vm->stack, create_array(vm->heap, length->value, intial->value));
+            break;
+        }
+        case OBJECT_INS: {
+            int arity = next_int(vm);
+            int class = next_int(vm);
+            #ifdef DEBUG
+                printf("object \n");
+            #endif
+            VMObj* obj = create_object(vm->heap, class, arity);
+            for (int i = arity - 1; i >= 0; i--) {
+                obj->slots[i] = vector_pop(vm->stack);
+            }
+            obj->parent = vector_pop(vm->stack);
+            vector_add(vm->stack, obj);
+            break;
+        }
+        case SLOT_INS: {
+            char* name = next_ptr(vm);
+            VMObj* obj = vector_pop(vm->stack);
+            CSlot slot = get_slot(vm, obj, name);
+            vector_add(vm->stack, obj->slots[slot.idx]);
+            break;
+        }
+        case SET_SLOT_INS: {
+            char* name = next_ptr(vm);
+            VMValue* value = vector_pop(vm->stack);
+            VMObj* obj = vector_pop(vm->stack);
+            CSlot slot = get_slot(vm, obj, name);
+            obj->slots[slot.idx] = value;
+            vector_add(vm->stack, value);
+            break;
+        }
+        case CALL_SLOT_INS: {
+            int arity = next_int(vm);
+            char* name = next_ptr(vm);
+            #ifdef DEBUG
+                printf("call-op #%d and str: %s\n", arity, name);
+            #endif
+            VMValue* value = vector_get(vm->stack, vm->stack->size - arity);
+            switch (value->tag) {
+                case (VM_ARRAY):
+                case (VM_INT): {
+                    void** args = malloc(sizeof(void*) * arity);
+                    for (int i = 0; i < arity; i++) {
+                        args[arity - i - 1] = vector_pop(vm->stack);
+                    }
+                    VMValue* (*func)(VM*, void**) = ht_get(vm->inbuilt, name);
+                    VMValue* return_value = (*func)(vm, args); 
+                    vector_add(vm->stack, return_value);
+                    free(args);
+                    break;
+                }
+                case (VM_NULL): {
+                    printf("No slots can be called on null value");
+                    exit(-1);
+                } default: {
+                    VMObj* obj = (VMObj*) value;
+                    CSlot slot = get_slot(vm, obj, name);
+                    vector_add(vm->fstack->stack, (void*) vm->fstack->fp);
+                    vector_add(vm->fstack->stack, vm->ip);
+                    vm->ip = slot.code;
+                }
+            }
+            break;
+        }
+        case CALL_INS : {
+            int arity = next_int(vm);
+            void* new_code = next_ptr(vm);
+            #ifdef DEBUG
+                printf("calls #%d and ptr: %p\n", arity, new_code);
+            #endif
+            vector_add(vm->fstack->stack, (void*) vm->fstack->fp);
+            vector_add(vm->fstack->stack, vm->ip);
+            vm->ip = new_code;
+            break;
+        }
+        case SET_LOCAL_INS : {
+            int idx = next_int(vm);
+            #ifdef DEBUG
+                printf("set local : %d at: %d\n", idx, vm->fstack->fp + 2 + idx);
+            #endif
+            vector_set(vm->fstack->stack, vm->fstack->fp + 2 + idx, vector_peek(vm->stack));
+            break;
+        }
+        case GET_LOCAL_INS : {
+            int idx = next_int(vm);
+            #ifdef DEBUG
+                printf("get local : %d\n", idx);
+            #endif
+            VMInt* value = vector_get(vm->fstack->stack, vm->fstack->fp + 2 + idx);
+            vector_add(vm->stack, vector_get(vm->fstack->stack, vm->fstack->fp + 2 + idx));
+            break;
+        }
+        case SET_GLOBAL_INS : {
+            int idx = next_int(vm);
+            #ifdef DEBUG
+                printf("set global : %d\n", idx);
+            #endif
+            vm->genv[idx] = vector_peek(vm->stack);
+            break;
+        }
+        case GET_GLOBAL_INS : {
+            int idx = next_int(vm);
+            #ifdef DEBUG
+                printf("get global : %d\n", idx);
+            #endif
+            vector_add(vm->stack, vm->genv[idx]);
+            break;
+        }
+        case BRANCH_INS : {
+            void* new_ptr = next_ptr(vm);
+            VMValue* value = vector_pop(vm->stack);
+            #ifdef DEBUG
+                printf("branch tag: %ld, ptr: %p\n", value->tag, new_ptr);
+            #endif
+            if(value->tag != VM_NULL) vm->ip = new_ptr;
+            break;
+        }
+        case GOTO_INS : {
+            void* ptr = next_ptr(vm);
+            #ifdef DEBUG
+                printf("goto ins, ptr: %p\n", ptr);
+            #endif
+            vm->ip = ptr;
+            break;
+        }
+        case RETURN_INS : {
+            #ifdef DEBUG
+                printf("return ins\n");
+            #endif
+            if (vm->fstack->stack->size == 0) return;
+            int old_fp = (int) vector_get(vm->fstack->stack, vm->fstack->fp);
+            vm->ip = vector_get(vm->fstack->stack, vm->fstack->fp + 1); 
+            vector_set_length(vm->fstack->stack, vm->fstack->fp, vm->null);
+            vm->fstack->fp = old_fp;
+            break;
+        }
+        case DROP_INS : {
+            #ifdef DEBUG
+                printf("drop ins\n");
+            #endif
+            vector_pop(vm->stack);
+            break;
+        }
+        case FRAME_INS : {
+            #ifdef DEBUG
+                printf("frame ins\n");
+            #endif
+            add_frame(vm);
+            break;
+        }
+        default: {
+            printf("Unknown tag: %d\n", tag);
+            exit(-1);
+        }
+    }  
   }
 }
 
-//===================== BUILTINS ================================
 
+
+//---------------------------------------------------------------------------
+//===================== BUILTINS ============================================
+//---------------------------------------------------------------------------
+
+VMValue* create_null_or_int(VM* vm, long a) {
+  if (a) {
+    return (VMValue*) create_int(vm->heap, a);
+  }
+  else {
+    return create_null(vm->heap);
+  }
+}
+
+VMValue* fe_set(VM* vm, void** args) {
+  int pos = ((VMInt*) args[1])->value;
+  int value = ((VMInt*) args[2])->value;
+  VMArray* array = args[0];
+  array->items[pos]= value;
+  return create_null_or_int(vm, 0);
+}
+
+VMValue* fe_get(VM* vm, void** args) {
+  int pos = ((VMInt*) args[1])->value;
+  VMArray* array = args[0];
+  int value = array->items[pos];
+  return (VMValue*) create_int(vm->heap, value);
+}
+
+VMValue* fe_len(VM* vm, void** args) {
+  return (VMValue*) create_int(vm->heap, ((VMArray* ) args[0])->length);
+}
+
+VMValue* fe_add(VM* vm, void** args) {
+  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value + ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_sub(VM* vm, void** args) {
+  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value - ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_mult(VM* vm, void** args) {
+  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value * ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_div(VM*vm, void** args) {
+  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value / ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_mod(VM* vm, void** args) {
+  return (VMValue*) create_int(vm->heap, ((VMInt*) args[0])->value % ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_lt(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value < ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_le(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value <= ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_gt(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value > ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_ge(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value >= ((VMInt*) args[1])->value);
+}
+
+VMValue* fe_eq(VM* vm, void** args) {
+  return create_null_or_int(vm, ((VMInt*) args[0])->value == ((VMInt*) args[1])->value);
+}
 
 ht* init_builtins() {
   ht* inbuilt_hash = ht_create();
@@ -505,98 +457,3 @@ ht* init_builtins() {
   return inbuilt_hash;
 }
 
-VMValue* fe_set(void** args) {
-  int pos = ((VMInt*) args[1])->value;
-  int value = ((VMInt*) args[2])->value;
-  VMArray* array = args[0];
-  array->items[pos]= value;
-  return create_null_or_int(0);
-}
-
-VMValue* fe_get(void** args) {
-  int pos = ((VMInt*) args[1])->value;
-  VMArray* array = args[0];
-  int value = array->items[pos];
-  return create_int(value);
-}
-
-VMValue* fe_len(void** args) {
-  return create_int(((VMArray* ) args[0])->length);
-}
-
-VMValue* fe_add(void** args) {
-  return create_int(((VMInt*) args[0])->value + ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_sub(void** args) {
-  return create_int(((VMInt*) args[0])->value - ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_mult(void** args) {
-  return create_int(((VMInt*) args[0])->value * ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_div(void** args) {
-  return create_int(((VMInt*) args[0])->value / ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_mod(void** args) {
-  return create_int(((VMInt*) args[0])->value % ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_lt(void** args) {
-  return create_null_or_int(((VMInt*) args[0])->value < ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_le(void** args) {
-  return create_null_or_int(((VMInt*) args[0])->value <= ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_gt(void** args) {
-  return create_null_or_int(((VMInt*) args[0])->value > ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_ge(void** args) {
-  return create_null_or_int(((VMInt*) args[0])->value >= ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_eq(void** args) {
-  return create_null_or_int(((VMInt*) args[0])->value == ((VMInt*) args[1])->value);
-}
-
-VMValue* create_null_or_int(long a) {
-  if (a) {
-    return (VMValue*) create_int(a);
-  }
-  else {
-    return (VMValue*) create_null();
-  }
-}
-
-VMValue* create_null() {
-  VMNull* null = malloc(sizeof(VMNull));
-  null->tag = VM_NULL;
-  return (VMValue*) null;
-}
-
-VMValue* create_int(int a) {
-  VMInt* value = malloc(sizeof(VMInt));
-  value->value = a;
-  value->tag = VM_INT;
-  return (VMValue*) value;
-}
-
-VMValue* format_print(StringValue* format_string, void **args) {
-    char *string = format_string->value;
-    int i = 0;
-    while (*string != '\0') {
-        if (*string == '~') {
-            printf("%ld", ((VMInt*) args[i])->value);
-            string++;
-            i++;
-        }
-        printf("%c", *string);
-        string++;
-    }
-    return create_null();
-}

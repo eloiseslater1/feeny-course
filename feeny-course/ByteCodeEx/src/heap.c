@@ -2,11 +2,16 @@
 
 Heap* init_heap() {
     Heap* heap = malloc(sizeof(Heap));
-    heap->size = MB * 1000;
+    heap->size = MB * 100;
     heap->memory = malloc(heap->size);
     heap->head = heap->memory + heap->size;
     heap->sp = heap->memory;
     return heap;
+}
+
+void free_heap(Heap* heap) {
+    free(heap->memory);
+    free(heap);
 }
 
 void* halloc (Heap* heap, long tag, int sz) {
