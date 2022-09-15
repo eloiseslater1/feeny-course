@@ -15,6 +15,7 @@ typedef struct {
     char* memory;
     char* sp;
     char* head;
+    char* free;
 } Heap;
 
 typedef enum {
@@ -46,7 +47,7 @@ typedef struct {
 
 typedef struct {
     long tag;
-    int length;
+    long length;
     void* items[];
 } VMArray;
 
@@ -62,6 +63,11 @@ typedef struct {
     char* ip;
     void** genv;
 } VM;
+
+typedef struct {
+    long tag;
+    void* forwarding;
+} BHeart;
 
 
 void interpret_bc (Program* p);

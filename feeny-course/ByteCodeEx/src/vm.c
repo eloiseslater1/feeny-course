@@ -142,11 +142,20 @@ void add_frame(VM* vm) {
 void run_gc(VM* vm);
 Heap* init_heap() {
     Heap* heap = malloc(sizeof(Heap));
-    heap->size = MB * 10;
+    heap->size = MB;
     heap->memory = malloc(heap->size);
+    heap->free = malloc(heap->size);
     heap->head = heap->memory + heap->size;
     heap->sp = heap->memory;
     return heap;
+}
+
+void switch_heap(Heap* heap) {
+    char* current_heap = heap->memory;
+    heap->memory = heap->free;
+    heap->free = current_heap;
+    heap->sp = heap->memory;
+    heap->head = heap->memory + heap->size;
 }
 
 void free_heap(Heap* heap) {
@@ -156,9 +165,12 @@ void free_heap(Heap* heap) {
 
 void* halloc (VM* vm, long tag, int sz) {
   if(vm->heap->sp + sz > vm->heap->head){
-      printf("Out of Memory.\n");
+      printf("Calling GC.\n");
       run_gc(vm);
-      exit(-1);
+      if(vm->heap->sp + sz > vm->heap->head) {
+        printf("Out of memory.");
+        exit(-1);
+      }
     }
   long* obj = (long*)vm->heap->sp;
   obj[0] = tag;
@@ -192,34 +204,126 @@ VMObj* create_object(VM* vm, int class, int arity) {
 //---------------------------------------------------------------------------
 //--------------------------------run gc------------------------------------
 //---------------------------------------------------------------------------
+long BHEART = -1;
+
+int get_obj_size(VM* vm, VMValue* obj) {
+    int sz;
+    switch(obj->tag) {
+        case VM_NULL: 
+            sz = sizeof(VMNull);
+            break;
+        case VM_INT:
+            sz = sizeof(VMInt);
+            break;
+        case VM_ARRAY:
+            VMArray* array = (VMArray*) obj;
+            sz = sizeof(VMArray) + sizeof(void*) * array->length;
+            break;
+        default:
+            CClass* class = vector_get(vm->classes, obj->tag);
+            sz = sizeof(VMObj) + sizeof(void*) * class->nvars;
+            break;
+    }
+    return sz;
+}
+
+void* forward_pointer(void* src, void* dst) {
+    BHeart* bheart = (BHeart*) src;
+    bheart->tag = BHEART;
+    bheart->forwarding = dst;
+}
+
+void* copy_to_free(VM* vm, void* obj) {
+    void* dst = vm->heap->sp;
+    int sz = get_obj_size(vm, (VMValue*) obj);
+    memcpy(dst, obj, sz);
+    vm->heap->sp += sz;
+    forward_pointer(obj, dst);
+    return dst;
+}
+
+void* get_post_gc_ptr(VM* vm, void* obj) {
+    long tag = ((long*)obj)[0];
+    if (tag == BHEART) {
+        BHeart* bheart = (BHeart*) obj;
+        return bheart->forwarding;
+    } else {
+        return copy_to_free(vm, obj);
+    }
+}
+
 void scan_stack(VM* vm){
     for (int i = 0; i < vm->stack->size; i++) {
-        void* ptr = vector_get(vm->stack, i);
-        printf("stack pointer at %i is: %p and in heap: %d\n", i, ptr, check_within_heap(vm->heap, ptr));
+        void* new_obj = get_post_gc_ptr(vm, vector_get(vm->stack, i));
+        vector_set(vm->stack, i, new_obj);
     }
 }
 
 void scan_stack_frame(VM* vm) {
-    for (int i = 0; i < vm->fstack->stack->size; i++) {
-        void* ptr = vector_get(vm->fstack->stack, i);
-        printf("frame pointer at %i is: %p and in heap: %d\n", i, ptr, check_within_heap(vm->heap, ptr)); 
+    int frame_start = vm->fstack->fp + 2;
+    int frame_end = vm->fstack->stack->size;
+    while (frame_end > 0) {
+        for (int i = frame_start; i < frame_end; i++) {
+            void* new_obj = get_post_gc_ptr(vm, vector_get(vm->fstack->stack, i));
+            vector_set(vm->fstack->stack, i, new_obj);
+        }
+        frame_end = frame_start - 2;
+        frame_start = ((int) vector_get(vm->fstack->stack, frame_start - 2)) + 2;
+    }
+}
+
+void scan_globals(VM* vm) {
+    int globals_len = sizeof(vm->genv) / sizeof(vm->genv[0]);
+    for (int i = 0; i < globals_len; i++) {
+        vm->genv[i] = get_post_gc_ptr(vm, vm->genv[i]);
     }
 }
 
 void scan_root_set(VM* vm) {
-    printf("start of heap is: %p\n", vm->heap->memory);
-    printf("end of heap is: %p\n", vm->heap->head);
     scan_stack(vm);
     scan_stack_frame(vm);
+    scan_globals(vm);
 }
 
-int check_within_heap(Heap* heap, void* pointer) {
-    if (pointer >= heap->memory && pointer <= heap->head) return 1;
-    return 0;
+void scan_array(VM* vm, VMArray* array) {
+    for (int i = 0; i < array->length; i++) {
+        array->items[i] = get_post_gc_ptr(vm, array->items[i]);
+    }
 }
+
+void scan_object(VM* vm, VMObj* obj) {
+    CClass* class = vector_get(vm->classes, obj->tag);
+    obj->parent = get_post_gc_ptr(vm, obj->parent);
+    for (int i = 0; i < class->nvars; i++) {
+        obj->slots[i] = get_post_gc_ptr(vm, obj->slots[i]);
+    }
+}
+
+void scan_heap(VM* vm) {
+    char* obj = vm->heap->memory;
+    while (obj < vm->heap->sp) {// only scan till the items we have just added
+        VMValue* value = (VMValue*) obj;
+        switch(value->tag) {
+            case VM_INT: // do nothing for int and null as they do not contain subitems
+            case VM_NULL:
+                break;
+            case VM_ARRAY:
+                scan_array(vm, (VMArray*) value);
+                break;
+            default:
+                scan_object(vm, (VMObj*) value);
+                break;
+        }
+        obj += get_obj_size(vm, value);
+    }
+}
+
 
 void run_gc(VM* vm) {
+    switch_heap(vm->heap);
     scan_root_set(vm);
+    vm->null = get_post_gc_ptr(vm, vm->null);
+    scan_heap(vm);
 }
 
 //---------------------------------------------------------------------------
@@ -471,7 +575,7 @@ VMValue* create_null_or_int(VM* vm, long a) {
 
 VMValue* fe_set(VM* vm, void** args) {
   int pos = ((VMInt*) args[1])->value;
-  int value = ((VMInt*) args[2])->value;
+  VMInt* value = (VMInt*) args[2];
   VMArray* array = args[0];
   array->items[pos]= value;
   return create_null_or_int(vm, 0);
@@ -480,8 +584,8 @@ VMValue* fe_set(VM* vm, void** args) {
 VMValue* fe_get(VM* vm, void** args) {
   int pos = ((VMInt*) args[1])->value;
   VMArray* array = args[0];
-  int value = array->items[pos];
-  return (VMValue*) create_int(vm, value);
+  VMInt* value = array->items[pos];
+  return (VMValue*) value;
 }
 
 VMValue* fe_len(VM* vm, void** args) {
