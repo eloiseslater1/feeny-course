@@ -20,6 +20,7 @@ VM* init_vm(VMInfo* vm_info) {
     vm->fstack = init_frame();
     vm->stack = make_vector();
     vm->heap = init_heap();
+    vm->null = NULL;
     vm->null = create_null(vm);
     vm->inbuilt = init_builtins();
     vm->ip = vm_info->ip;
@@ -32,6 +33,7 @@ void init_genv(VM* vm, int globals_size) {
     for (int i = 0; i < globals_size; i++) {
         vm->genv[i] = vm->null;
     }
+    vm->genv_size = globals_size;
 }
 
 void free_vm(VM* vm) {
@@ -189,11 +191,8 @@ VMInt* create_int(VM* vm, int a) {
   return value;
 }
 
-VMArray* create_array(VM* vm, int length, int initial) {
+VMArray* create_array(VM* vm, int length) {
     VMArray* array = (VMArray*) halloc(vm, VM_ARRAY, sizeof(VMArray) + sizeof(void*) * length);
-    for (int i = 0; i < length; i++) {
-        array->items[i] = initial;
-    }
     array->length = length;
     return array;
 }
@@ -252,7 +251,7 @@ void* get_post_gc_ptr(VM* vm, void* obj) {
     }
 }
 
-void scan_stack(VM* vm){
+void scan_stack(VM* vm) {
     for (int i = 0; i < vm->stack->size; i++) {
         void* new_obj = get_post_gc_ptr(vm, vector_get(vm->stack, i));
         vector_set(vm->stack, i, new_obj);
@@ -273,8 +272,7 @@ void scan_stack_frame(VM* vm) {
 }
 
 void scan_globals(VM* vm) {
-    int globals_len = sizeof(vm->genv) / sizeof(vm->genv[0]);
-    for (int i = 0; i < globals_len; i++) {
+    for (int i = 0; i < vm->genv_size; i++) {
         vm->genv[i] = get_post_gc_ptr(vm, vm->genv[i]);
     }
 }
@@ -322,7 +320,9 @@ void scan_heap(VM* vm) {
 void run_gc(VM* vm) {
     switch_heap(vm->heap);
     scan_root_set(vm);
-    vm->null = get_post_gc_ptr(vm, vm->null);
+    if (vm->null != NULL) {
+        vm->null = get_post_gc_ptr(vm, vm->null);
+    }
     scan_heap(vm);
 }
 
@@ -362,7 +362,9 @@ void runvm (VM* vm) {
     #endif
     switch (tag) {
         case INT_INS : {
-            VMInt* value = create_int(vm, next_int(vm));
+            int i = next_int(vm);
+            //printf("int is: %d", i);
+            VMInt* value = create_int(vm, i);
             #ifdef DEBUG
                 printf("int ins: tag: %ld, val: %ld\n", value->tag, value->value);
             #endif
@@ -373,7 +375,7 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("null ins\n");
             #endif
-            VMValue* value = create_null(vm);
+            VMValue* value = vm->null;
             vector_add(vm->stack, value);
             break;
         }
@@ -396,9 +398,14 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("array\n");
             #endif
-            VMInt* intial = vector_pop(vm->stack);
-            VMInt* length = vector_pop(vm->stack);
-            vector_add(vm->stack, create_array(vm, length->value, intial->value));
+            VMInt* length = vector_get(vm->stack, vm->stack->size - 2);
+            VMArray* array = create_array(vm, length->value);
+            VMInt* initial = vector_pop(vm->stack);
+            vector_pop(vm->stack);
+            for (int i = 0; i < array->length; i++) {
+                array->items[i] = initial;
+            }
+            vector_add(vm->stack, array);
             break;
         }
         case OBJECT_INS: {
@@ -569,7 +576,7 @@ VMValue* create_null_or_int(VM* vm, long a) {
     return (VMValue*) create_int(vm, a);
   }
   else {
-    return create_null(vm);
+    return (VMValue*) vm->null;
   }
 }
 

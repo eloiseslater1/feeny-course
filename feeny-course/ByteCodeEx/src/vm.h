@@ -62,6 +62,7 @@ typedef struct {
     ht* inbuilt;
     char* ip;
     void** genv;
+    int genv_size;
 } VM;
 
 typedef struct {
