@@ -6,12 +6,14 @@
 //---------------------------------------------------------------------------
 StackFrame* init_frame();
 void free_frame(StackFrame* stack_frame);
-ht* init_builtins();
 void init_genv(VM* vm, int globals_size);
 void runvm (VM* vm);
 Heap* init_heap();
 void free_heap(Heap* heap);
-VMValue* create_null(VM* vm);
+//VMValue* create_null(VM* vm);
+intptr_t create_null();
+void int_function_call(VM* vm, char* name);
+void array_function_call(VM* vm, char* name);
 
 VM* init_vm(VMInfo* vm_info) {
     VM* vm = malloc(sizeof(VM));
@@ -20,9 +22,9 @@ VM* init_vm(VMInfo* vm_info) {
     vm->fstack = init_frame();
     vm->stack = make_vector();
     vm->heap = init_heap();
-    vm->null = NULL;
-    vm->null = create_null(vm);
-    vm->inbuilt = init_builtins();
+    //vm->null = NULL;
+    //vm->null = create_null(vm);
+    vm->null = create_null();
     vm->ip = vm_info->ip;
     init_genv(vm, vm_info->globals_size);
     return vm;
@@ -42,7 +44,6 @@ void free_vm(VM* vm) {
     free_frame(vm->fstack);
     vector_free(vm->stack);
     free_heap(vm->heap);
-    ht_destroy(vm->inbuilt);
     free(vm->genv);
     free(vm);
 }
@@ -68,6 +69,44 @@ CSlot get_slot(VM* vm, VMObj* obj, char* name) {
     }
     return get_slot(vm, obj->parent, name);
 }
+
+//---------------------------------------------------------------------------
+//--------------------------------Tagging------------------------------------
+//---------------------------------------------------------------------------
+
+typedef enum {
+    INT_PTAG,
+    OBJ_PTAG,
+    NULL_PTAG,
+} PTAG;
+
+static const intptr_t tagMask = 7;
+static const intptr_t pointerMask = -tagMask;
+
+intptr_t create_int(int value) {
+    return (intptr_t) value << 3;
+}
+
+int get_int(intptr_t value) {
+    return (int) value >> 3;
+}
+
+intptr_t create_null() {
+    return (intptr_t) NULL_PTAG; 
+}
+
+intptr_t set_obj_bit(VMValue* ptr) {
+    return ((intptr_t) ptr) | 1;
+}
+
+VMValue* get_obj(intptr_t ptr) {
+    return (VMValue*) (ptr & ~1);
+}
+
+int get_tag_value(intptr_t value) {
+    return value & tagMask;
+}
+
 
 //---------------------------------------------------------------------------
 //===================== VM ==================================================
@@ -100,18 +139,22 @@ void* next_ptr (VM* vm) {
   return s;
 }
 
-void* format_print(char* string, void **args) {
+void* format_print(VM* vm, char* string, int nargs) {
     int i = 0;
     while (*string != '\0') {
         if (*string == '~') {
-            printf("%ld", ((VMInt*) args[i])->value);
+            printf("%d", get_int((intptr_t) vector_get(vm->stack, vm->stack->size - nargs + i)));
             string++;
             i++;
         }
         printf("%c", *string);
         string++;
     }
+    for (int i = 0; i < nargs; i++) {
+        vector_pop(vm->stack);
+    }
 }
+
 //---------------------------------------------------------------------------
 //--------------------------------StackFrame------------------------------------
 //---------------------------------------------------------------------------
@@ -132,7 +175,7 @@ void add_frame(VM* vm) {
     int nargs = next_int(vm);
     int nlocals = next_int(vm);
     vm->fstack->fp = (vm->fstack->stack->size > 0) ? vm->fstack->stack->size - 2 : 0; //size = 9, fp = 7
-    vector_set_length(vm->fstack->stack, vm->fstack->stack->size + nargs + nlocals, vm->null);
+    vector_set_length(vm->fstack->stack, vm->fstack->stack->size + nargs + nlocals, (void*) vm->null);
     for (int i = nargs; i > 0; i--) {
         vector_set(vm->fstack->stack, vm->fstack->fp + 1 + i, vector_pop(vm->stack));
     }
@@ -144,7 +187,7 @@ void add_frame(VM* vm) {
 void run_gc(VM* vm);
 Heap* init_heap() {
     Heap* heap = malloc(sizeof(Heap));
-    heap->size = MB;
+    heap->size = MB / 1000;
     heap->memory = malloc(heap->size);
     heap->free = malloc(heap->size);
     heap->head = heap->memory + heap->size;
@@ -180,20 +223,10 @@ void* halloc (VM* vm, long tag, int sz) {
   return obj;
 }
 
-VMValue* create_null(VM* vm) {
-  VMNull* null = (VMNull*) halloc(vm, VM_NULL, sizeof(VMNull));
-  return (VMValue*) null;
-}
-
-VMInt* create_int(VM* vm, int a) {
-  VMInt* value = (VMInt*) halloc(vm, VM_INT, sizeof(VMInt));
-  value->value = a;
-  return value;
-}
-
-VMArray* create_array(VM* vm, int length) {
-    VMArray* array = (VMArray*) halloc(vm, VM_ARRAY, sizeof(VMArray) + sizeof(void*) * length);
-    array->length = length;
+VMArray* create_array(VM* vm, intptr_t length) {
+    int int_length = get_int(length);
+    VMArray* array = (VMArray*) halloc(vm, VM_ARRAY, sizeof(VMArray) + sizeof(void*) * int_length);
+    array->length = int_length;
     return array;
 }
 
@@ -226,35 +259,42 @@ int get_obj_size(VM* vm, VMValue* obj) {
     return sz;
 }
 
-void* forward_pointer(void* src, void* dst) {
-    BHeart* bheart = (BHeart*) src;
+intptr_t forward_pointer(void* src, void* dst) {
+    BHeart* bheart = (BHeart*) src; 
     bheart->tag = BHEART;
-    bheart->forwarding = dst;
+    bheart->forwarding = set_obj_bit(dst);
+    return bheart->forwarding;
 }
 
-void* copy_to_free(VM* vm, void* obj) {
+intptr_t copy_to_free(VM* vm, void* obj) {
     void* dst = vm->heap->sp;
     int sz = get_obj_size(vm, (VMValue*) obj);
     memcpy(dst, obj, sz);
     vm->heap->sp += sz;
-    forward_pointer(obj, dst);
-    return dst;
+    return forward_pointer(obj, dst);
 }
 
-void* get_post_gc_ptr(VM* vm, void* obj) {
-    long tag = ((long*)obj)[0];
-    if (tag == BHEART) {
-        BHeart* bheart = (BHeart*) obj;
-        return bheart->forwarding;
-    } else {
-        return copy_to_free(vm, obj);
+intptr_t get_post_gc_ptr(VM* vm, intptr_t obj_ptr) {
+    switch(get_tag_value(obj_ptr)) {
+        case INT_PTAG:
+        case NULL_PTAG:
+            return obj_ptr;
+        case OBJ_PTAG:
+            void* obj = (void*) get_obj(obj_ptr);
+            long tag = ((long*)obj)[0];
+            if (tag == BHEART) {
+                BHeart* bheart = (BHeart*) obj;
+                return bheart->forwarding;
+            } else {
+                return copy_to_free(vm, obj);
+            }
     }
 }
 
 void scan_stack(VM* vm) {
     for (int i = 0; i < vm->stack->size; i++) {
-        void* new_obj = get_post_gc_ptr(vm, vector_get(vm->stack, i));
-        vector_set(vm->stack, i, new_obj);
+        intptr_t new_obj = get_post_gc_ptr(vm, (intptr_t) vector_get(vm->stack, i));
+        vector_set(vm->stack, i, (void*) new_obj);
     }
 }
 
@@ -263,8 +303,8 @@ void scan_stack_frame(VM* vm) {
     int frame_end = vm->fstack->stack->size;
     while (frame_end > 0) {
         for (int i = frame_start; i < frame_end; i++) {
-            void* new_obj = get_post_gc_ptr(vm, vector_get(vm->fstack->stack, i));
-            vector_set(vm->fstack->stack, i, new_obj);
+            intptr_t new_obj = get_post_gc_ptr(vm, (intptr_t) vector_get(vm->fstack->stack, i));
+            vector_set(vm->fstack->stack, i, (void*) new_obj);
         }
         frame_end = frame_start - 2;
         frame_start = ((int) vector_get(vm->fstack->stack, frame_start - 2)) + 2;
@@ -273,7 +313,7 @@ void scan_stack_frame(VM* vm) {
 
 void scan_globals(VM* vm) {
     for (int i = 0; i < vm->genv_size; i++) {
-        vm->genv[i] = get_post_gc_ptr(vm, vm->genv[i]);
+        vm->genv[i] = get_post_gc_ptr(vm, (intptr_t) vm->genv[i]);
     }
 }
 
@@ -285,24 +325,24 @@ void scan_root_set(VM* vm) {
 
 void scan_array(VM* vm, VMArray* array) {
     for (int i = 0; i < array->length; i++) {
-        array->items[i] = get_post_gc_ptr(vm, array->items[i]);
+        array->items[i] = get_post_gc_ptr(vm, (intptr_t) array->items[i]);
     }
 }
 
 void scan_object(VM* vm, VMObj* obj) {
     CClass* class = vector_get(vm->classes, obj->tag);
-    obj->parent = get_post_gc_ptr(vm, obj->parent);
+    obj->parent = get_obj(get_post_gc_ptr(vm, set_obj_bit((VMValue*) obj->parent)));
     for (int i = 0; i < class->nvars; i++) {
-        obj->slots[i] = get_post_gc_ptr(vm, obj->slots[i]);
+        obj->slots[i] = get_post_gc_ptr(vm, (intptr_t) obj->slots[i]);
     }
 }
 
 void scan_heap(VM* vm) {
     char* obj = vm->heap->memory;
-    while (obj < vm->heap->sp) {// only scan till the items we have just added
+    while (obj < vm->heap->sp) {
         VMValue* value = (VMValue*) obj;
         switch(value->tag) {
-            case VM_INT: // do nothing for int and null as they do not contain subitems
+            case VM_INT: 
             case VM_NULL:
                 break;
             case VM_ARRAY:
@@ -320,9 +360,6 @@ void scan_heap(VM* vm) {
 void run_gc(VM* vm) {
     switch_heap(vm->heap);
     scan_root_set(vm);
-    if (vm->null != NULL) {
-        vm->null = get_post_gc_ptr(vm, vm->null);
-    }
     scan_heap(vm);
 }
 
@@ -337,46 +374,51 @@ void runvm (VM* vm) {
     #ifdef DEBUG
         printf("STACK: ");
         for (int i = 0; i < vm->stack->size; i++) {
-            VMValue* value = vector_get(vm->stack, i);
-            switch(value->tag) {
-                case (VM_INT): {
-                    printf("int: %ld, ", ((VMInt*) value)->value);
+            intptr_t value = (intptr_t) vector_get(vm->stack, i);
+            switch(get_tag_value(value)) {
+                case INT_PTAG: 
+                    printf("int: %d, ", get_int(value));
                     break;
-                } case (NULL_VAL): {
-                    printf("null, ", ((VMInt*) value)->value);
+                case NULL_PTAG:
+                    printf("null, ");
                     break;
-                } case (VM_ARRAY): {
-                    VMArray* array = (VMArray*) value;
-                    printf("(");
-                    for(int i = 0; i < array->length; i++) {
-                        printf("%d, ", (int) array->items[i]);
+                case OBJ_PTAG:
+                    VMValue* value2 = get_obj(value);
+                    switch(value2->tag) {
+                        case VM_ARRAY:
+                            VMArray* array = (VMArray*) value2;
+                            printf("(");
+                            for(int i = 0; i < array->length; i++) {
+                                printf("%d, ", get_int(array->items[i]));
+                            }
+                            printf(")");
+                            break;
+                        default :{
+                            VMObj* obj = (VMObj*) value2;
+                            printf("Class #%ld", obj->tag);
+                        }
                     }
-                    printf(")");
-                } default :{
-                    VMObj* obj = (VMObj*) value;
-                    printf("Class #%ld", obj->tag);
+                    break;
                 }
-            }
-            }
+        }
         printf("\n");
     #endif
     switch (tag) {
         case INT_INS : {
             int i = next_int(vm);
-            //printf("int is: %d", i);
-            VMInt* value = create_int(vm, i);
+            intptr_t value = create_int(i);
             #ifdef DEBUG
-                printf("int ins: tag: %ld, val: %ld\n", value->tag, value->value);
+                printf("int ins val: %d\n", i);
             #endif
-            vector_add(vm->stack, value);
+            vector_add(vm->stack, (void*) value);
             break;
         }
         case NULL_INS : {
             #ifdef DEBUG
                 printf("null ins\n");
             #endif
-            VMValue* value = vm->null;
-            vector_add(vm->stack, value);
+            intptr_t value = vm->null;
+            vector_add(vm->stack, (void*) value);
             break;
         }
         case PRINTF_INS : {
@@ -385,27 +427,22 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("print: %d and str: %s\n", nargs, str);
             #endif
-            void** args = malloc(sizeof(void*) * nargs);
-            for (int i = 0; i< nargs; i++) {
-                args[nargs - i- 1] =  vector_pop(vm->stack);
-            }
-            format_print(str, args);
-            free(args);
-            vector_add(vm->stack, vm->null);
+            format_print(vm, str, nargs);
+            vector_add(vm->stack, (void*) vm->null);
             break;
         }
         case ARRAY_INS : {
             #ifdef DEBUG
                 printf("array\n");
             #endif
-            VMInt* length = vector_get(vm->stack, vm->stack->size - 2);
-            VMArray* array = create_array(vm, length->value);
-            VMInt* initial = vector_pop(vm->stack);
+            intptr_t length = (intptr_t) vector_get(vm->stack, vm->stack->size - 2);
+            VMArray* array = create_array(vm, length);
+            intptr_t initial = (intptr_t) vector_pop(vm->stack);
             vector_pop(vm->stack);
             for (int i = 0; i < array->length; i++) {
                 array->items[i] = initial;
             }
-            vector_add(vm->stack, array);
+            vector_add(vm->stack, (void*) set_obj_bit((VMValue*) array));
             break;
         }
         case OBJECT_INS: {
@@ -418,24 +455,27 @@ void runvm (VM* vm) {
             for (int i = arity - 1; i >= 0; i--) {
                 obj->slots[i] = vector_pop(vm->stack);
             }
-            obj->parent = vector_pop(vm->stack);
-            vector_add(vm->stack, obj);
+            intptr_t parent_ptr = vector_pop(vm->stack);
+            obj->parent = (VMObj*) get_obj(parent_ptr);
+            vector_add(vm->stack, (void*) set_obj_bit((VMValue*) obj));
             break;
         }
         case SLOT_INS: {
             char* name = next_ptr(vm);
-            VMObj* obj = vector_pop(vm->stack);
-            CSlot slot = get_slot(vm, obj, name);
-            vector_add(vm->stack, obj->slots[slot.idx]);
+            intptr_t obj = (intptr_t) vector_pop(vm->stack);
+            VMObj* vm_obj = (VMObj*) get_obj(obj);
+            CSlot slot = get_slot(vm, vm_obj, name);
+            vector_add(vm->stack, vm_obj->slots[slot.idx]);
             break;
         }
         case SET_SLOT_INS: {
             char* name = next_ptr(vm);
-            VMValue* value = vector_pop(vm->stack);
-            VMObj* obj = vector_pop(vm->stack);
-            CSlot slot = get_slot(vm, obj, name);
-            obj->slots[slot.idx] = value;
-            vector_add(vm->stack, value);
+            intptr_t value = (intptr_t) vector_pop(vm->stack);
+            intptr_t obj =  (intptr_t) vector_pop(vm->stack);
+            VMObj* vm_obj = get_obj(obj);
+            CSlot slot = get_slot(vm, vm_obj, name);
+            vm_obj->slots[slot.idx] = value;
+            vector_add(vm->stack, (void*) value);
             break;
         }
         case CALL_SLOT_INS: {
@@ -444,29 +484,30 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("call-op #%d and str: %s\n", arity, name);
             #endif
-            VMValue* value = vector_get(vm->stack, vm->stack->size - arity);
-            switch (value->tag) {
-                case (VM_ARRAY):
-                case (VM_INT): {
-                    void** args = malloc(sizeof(void*) * arity);
-                    for (int i = 0; i < arity; i++) {
-                        args[arity - i - 1] = vector_pop(vm->stack);
-                    }
-                    VMValue* (*func)(VM*, void**) = ht_get(vm->inbuilt, name);
-                    VMValue* return_value = (*func)(vm, args); 
-                    vector_add(vm->stack, return_value);
-                    free(args);
+            intptr_t ptr = (intptr_t) vector_get(vm->stack, vm->stack->size - arity);
+            switch(get_tag_value(ptr)) {
+                case INT_PTAG: {
+                    int_function_call(vm, name);
                     break;
-                }
-                case (VM_NULL): {
+                } case NULL_PTAG: {
                     printf("No slots can be called on null value");
-                    exit(-1);
-                } default: {
-                    VMObj* obj = (VMObj*) value;
-                    CSlot slot = get_slot(vm, obj, name);
-                    vector_add(vm->fstack->stack, (void*) vm->fstack->fp);
-                    vector_add(vm->fstack->stack, vm->ip);
-                    vm->ip = slot.code;
+                    exit(-1); 
+                } case OBJ_PTAG: {
+                    VMValue* value = get_obj(ptr);
+                    switch(value->tag) {
+                        case VM_ARRAY: {
+                            array_function_call(vm, name);
+                            break;
+                        }
+                        default : {
+                            VMObj* obj = (VMObj*) value;
+                            CSlot slot = get_slot(vm, obj, name);
+                            vector_add(vm->fstack->stack, (void*) vm->fstack->fp);
+                            vector_add(vm->fstack->stack, vm->ip);
+                            vm->ip = slot.code;
+                            break;
+                        }
+                    }   
                 }
             }
             break;
@@ -495,7 +536,6 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("get local : %d\n", idx);
             #endif
-            VMInt* value = vector_get(vm->fstack->stack, vm->fstack->fp + 2 + idx);
             vector_add(vm->stack, vector_get(vm->fstack->stack, vm->fstack->fp + 2 + idx));
             break;
         }
@@ -517,11 +557,11 @@ void runvm (VM* vm) {
         }
         case BRANCH_INS : {
             void* new_ptr = next_ptr(vm);
-            VMValue* value = vector_pop(vm->stack);
+            intptr_t value = (intptr_t) vector_pop(vm->stack);
             #ifdef DEBUG
-                printf("branch tag: %ld, ptr: %p\n", value->tag, new_ptr);
+                printf("branch tag: %d, ptr: %p\n", get_tag_value(value), new_ptr);
             #endif
-            if(value->tag != VM_NULL) vm->ip = new_ptr;
+            if(get_tag_value(value) != NULL_PTAG) vm->ip = new_ptr;
             break;
         }
         case GOTO_INS : {
@@ -539,7 +579,7 @@ void runvm (VM* vm) {
             if (vm->fstack->stack->size == 0) return;
             int old_fp = (int) vector_get(vm->fstack->stack, vm->fstack->fp);
             vm->ip = vector_get(vm->fstack->stack, vm->fstack->fp + 1); 
-            vector_set_length(vm->fstack->stack, vm->fstack->fp, vm->null);
+            vector_set_length(vm->fstack->stack, vm->fstack->fp, (void*) vm->null);
             vm->fstack->fp = old_fp;
             break;
         }
@@ -571,89 +611,63 @@ void runvm (VM* vm) {
 //===================== BUILTINS ============================================
 //---------------------------------------------------------------------------
 
-VMValue* create_null_or_int(VM* vm, long a) {
-  if (a) {
-    return (VMValue*) create_int(vm, a);
-  }
-  else {
-    return (VMValue*) vm->null;
-  }
+intptr_t create_null_or_int(VM* vm, int a) {
+  if (a) return create_int(a);
+  else return vm->null;
 }
 
-VMValue* fe_set(VM* vm, void** args) {
-  int pos = ((VMInt*) args[1])->value;
-  VMInt* value = (VMInt*) args[2];
-  VMArray* array = args[0];
-  array->items[pos]= value;
-  return create_null_or_int(vm, 0);
+void int_function_call(VM* vm, char* name) {
+    intptr_t y = vector_pop(vm->stack);
+    intptr_t x = vector_pop(vm->stack);
+    intptr_t value;
+    if(strcmp(name, "eq") == 0)
+        value = create_null_or_int(vm, x == y);
+    else if(strcmp(name, "lt") == 0)
+        value = create_null_or_int(vm, x < y);
+    else if(strcmp(name, "le") == 0)
+        value = create_null_or_int(vm, x <= y);
+    else if(strcmp(name, "gt") == 0)
+        value =  create_null_or_int(vm, x > y);
+    else if(strcmp(name, "ge") == 0)
+        value = create_null_or_int(vm, x >= y);
+    else if(strcmp(name, "add") == 0)
+        value = x + y;
+    else if(strcmp(name, "sub") == 0)
+        value = x - y;
+    else if(strcmp(name, "mul") == 0)
+        value = create_int(get_int(x) * get_int(y));
+    else if(strcmp(name, "div") == 0)
+        value = create_int(x / y);
+    else if(strcmp(name, "mod") == 0)
+        value = x % y;
+    else {
+        printf("No slot named %s for Int.\n", name);
+        exit(-1);
+    }
+    vector_add(vm->stack, (void*) value);
 }
 
-VMValue* fe_get(VM* vm, void** args) {
-  int pos = ((VMInt*) args[1])->value;
-  VMArray* array = args[0];
-  VMInt* value = array->items[pos];
-  return (VMValue*) value;
+void array_function_call(VM* vm, char* name) {
+    intptr_t value;
+    if(strcmp(name, "get") == 0) {
+        intptr_t i = vector_pop(vm->stack);
+        intptr_t array_ptr = vector_pop(vm->stack);
+        VMArray* array = (VMArray*) get_obj(array_ptr);
+        value = array->items[get_int(i)];
+    } else if(strcmp(name, "set") == 0) {
+        intptr_t value = vector_pop(vm->stack);
+        intptr_t pos = vector_pop(vm->stack);
+        intptr_t array_ptr = vector_pop(vm->stack);
+        VMArray* array = (VMArray*) get_obj(array_ptr);
+        array->items[get_int(pos)] = value;
+        value = vm->null;
+    } else if(strcmp(name, "length") == 0) {
+        intptr_t array_ptr = vector_pop(vm->stack);
+        VMArray* array = (VMArray*) get_obj(array_ptr);
+        value = create_int(array->length);
+    } else {
+        printf("No slot named %s for Int.\n", name);
+        exit(-1);
+    }
+    vector_add(vm->stack, (void*) value); 
 }
-
-VMValue* fe_len(VM* vm, void** args) {
-  return (VMValue*) create_int(vm, ((VMArray* ) args[0])->length);
-}
-
-VMValue* fe_add(VM* vm, void** args) {
-  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value + ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_sub(VM* vm, void** args) {
-  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value - ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_mult(VM* vm, void** args) {
-  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value * ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_div(VM*vm, void** args) {
-  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value / ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_mod(VM* vm, void** args) {
-  return (VMValue*) create_int(vm, ((VMInt*) args[0])->value % ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_lt(VM* vm, void** args) {
-  return create_null_or_int(vm, ((VMInt*) args[0])->value < ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_le(VM* vm, void** args) {
-  return create_null_or_int(vm, ((VMInt*) args[0])->value <= ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_gt(VM* vm, void** args) {
-  return create_null_or_int(vm, ((VMInt*) args[0])->value > ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_ge(VM* vm, void** args) {
-  return create_null_or_int(vm, ((VMInt*) args[0])->value >= ((VMInt*) args[1])->value);
-}
-
-VMValue* fe_eq(VM* vm, void** args) {
-  return create_null_or_int(vm, ((VMInt*) args[0])->value == ((VMInt*) args[1])->value);
-}
-
-ht* init_builtins() {
-  ht* inbuilt_hash = ht_create();
-  ht_set(inbuilt_hash, "set", &fe_set);
-  ht_set(inbuilt_hash, "get", &fe_get);
-  ht_set(inbuilt_hash, "length", &fe_len);
-  ht_set(inbuilt_hash, "add", &fe_add);
-  ht_set(inbuilt_hash, "sub", &fe_sub);
-  ht_set(inbuilt_hash, "mul", &fe_mult);
-  ht_set(inbuilt_hash, "div", &fe_div);
-  ht_set(inbuilt_hash, "mod", &fe_mod);
-  ht_set(inbuilt_hash, "lt", &fe_lt);
-  ht_set(inbuilt_hash, "le", &fe_le);
-  ht_set(inbuilt_hash, "gt", &fe_gt);
-  ht_set(inbuilt_hash, "ge", &fe_ge);
-  ht_set(inbuilt_hash, "eq", &fe_eq);
-  return inbuilt_hash;
-}
-

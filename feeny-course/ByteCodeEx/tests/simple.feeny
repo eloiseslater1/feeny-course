@@ -1,7 +1,7 @@
 defn add () :
    var i = 1
    var x = 2
-   var y = i + x
+   var y = i % x
    printf("Value: ~", y)
 
 defn never ():

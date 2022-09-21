@@ -1,7 +1,10 @@
 #ifndef VM2_H
 #define VM2_H
 
+#include <stdint.h>
 #include "quicken.h"
+
+//#define DEBUG
 
 #define MB (1024 * 1024)
 
@@ -48,7 +51,7 @@ typedef struct {
 typedef struct {
     long tag;
     long length;
-    void* items[];
+    intptr_t* items[];
 } VMArray;
 
 
@@ -56,10 +59,9 @@ typedef struct {
     Vector* classes;
     Code* code_buffer;
     StackFrame* fstack;
-    VMNull* null;
+    intptr_t null;
     Vector* stack;
     Heap* heap;
-    ht* inbuilt;
     char* ip;
     void** genv;
     int genv_size;
@@ -67,7 +69,7 @@ typedef struct {
 
 typedef struct {
     long tag;
-    void* forwarding;
+    intptr_t forwarding;
 } BHeart;
 
 
