@@ -10,7 +10,6 @@ void init_genv(VM* vm, int globals_size);
 void runvm (VM* vm);
 Heap* init_heap();
 void free_heap(Heap* heap);
-//VMValue* create_null(VM* vm);
 intptr_t create_null();
 void int_function_call(VM* vm, char* name);
 void array_function_call(VM* vm, char* name);
@@ -22,8 +21,6 @@ VM* init_vm(VMInfo* vm_info) {
     vm->fstack = init_frame();
     vm->stack = make_vector();
     vm->heap = init_heap();
-    //vm->null = NULL;
-    //vm->null = create_null(vm);
     vm->null = create_null();
     vm->ip = vm_info->ip;
     init_genv(vm, vm_info->globals_size);
@@ -31,7 +28,7 @@ VM* init_vm(VMInfo* vm_info) {
 }
 
 void init_genv(VM* vm, int globals_size) {
-    vm->genv = malloc(sizeof(void*) * globals_size);
+    vm->genv = malloc(sizeof(intptr_t) * globals_size);
     for (int i = 0; i < globals_size; i++) {
         vm->genv[i] = vm->null;
     }
@@ -81,7 +78,6 @@ typedef enum {
 } PTAG;
 
 static const intptr_t tagMask = 7;
-static const intptr_t pointerMask = -tagMask;
 
 intptr_t create_int(int value) {
     return (intptr_t) value << 3;
@@ -187,7 +183,7 @@ void add_frame(VM* vm) {
 void run_gc(VM* vm);
 Heap* init_heap() {
     Heap* heap = malloc(sizeof(Heap));
-    heap->size = MB / 1000;
+    heap->size = MB;
     heap->memory = malloc(heap->size);
     heap->free = malloc(heap->size);
     heap->head = heap->memory + heap->size;
@@ -370,7 +366,6 @@ void run_gc(VM* vm) {
 void runvm (VM* vm) {  
   while (vm->ip) {
     int tag = next_int(vm);
-    //printf("tag is: %d", tag);
     #ifdef DEBUG
         printf("STACK: ");
         for (int i = 0; i < vm->stack->size; i++) {
@@ -455,7 +450,7 @@ void runvm (VM* vm) {
             for (int i = arity - 1; i >= 0; i--) {
                 obj->slots[i] = vector_pop(vm->stack);
             }
-            intptr_t parent_ptr = vector_pop(vm->stack);
+            intptr_t parent_ptr = (intptr_t) vector_pop(vm->stack);
             obj->parent = (VMObj*) get_obj(parent_ptr);
             vector_add(vm->stack, (void*) set_obj_bit((VMValue*) obj));
             break;
@@ -465,14 +460,14 @@ void runvm (VM* vm) {
             intptr_t obj = (intptr_t) vector_pop(vm->stack);
             VMObj* vm_obj = (VMObj*) get_obj(obj);
             CSlot slot = get_slot(vm, vm_obj, name);
-            vector_add(vm->stack, vm_obj->slots[slot.idx]);
+            vector_add(vm->stack, (void*) vm_obj->slots[slot.idx]);
             break;
         }
         case SET_SLOT_INS: {
             char* name = next_ptr(vm);
             intptr_t value = (intptr_t) vector_pop(vm->stack);
             intptr_t obj =  (intptr_t) vector_pop(vm->stack);
-            VMObj* vm_obj = get_obj(obj);
+            VMObj* vm_obj = (VMObj*) get_obj(obj);
             CSlot slot = get_slot(vm, vm_obj, name);
             vm_obj->slots[slot.idx] = value;
             vector_add(vm->stack, (void*) value);
@@ -552,7 +547,7 @@ void runvm (VM* vm) {
             #ifdef DEBUG
                 printf("get global : %d\n", idx);
             #endif
-            vector_add(vm->stack, vm->genv[idx]);
+            vector_add(vm->stack, (void*) vm->genv[idx]);
             break;
         }
         case BRANCH_INS : {
@@ -617,8 +612,8 @@ intptr_t create_null_or_int(VM* vm, int a) {
 }
 
 void int_function_call(VM* vm, char* name) {
-    intptr_t y = vector_pop(vm->stack);
-    intptr_t x = vector_pop(vm->stack);
+    intptr_t y = (intptr_t) vector_pop(vm->stack);
+    intptr_t x = (intptr_t) vector_pop(vm->stack);
     intptr_t value;
     if(strcmp(name, "eq") == 0)
         value = create_null_or_int(vm, x == y);
@@ -650,19 +645,19 @@ void int_function_call(VM* vm, char* name) {
 void array_function_call(VM* vm, char* name) {
     intptr_t value;
     if(strcmp(name, "get") == 0) {
-        intptr_t i = vector_pop(vm->stack);
-        intptr_t array_ptr = vector_pop(vm->stack);
+        intptr_t i = (intptr_t) vector_pop(vm->stack);
+        intptr_t array_ptr = (intptr_t) vector_pop(vm->stack);
         VMArray* array = (VMArray*) get_obj(array_ptr);
         value = array->items[get_int(i)];
     } else if(strcmp(name, "set") == 0) {
-        intptr_t value = vector_pop(vm->stack);
-        intptr_t pos = vector_pop(vm->stack);
-        intptr_t array_ptr = vector_pop(vm->stack);
+        intptr_t value = (intptr_t) vector_pop(vm->stack);
+        intptr_t pos = (intptr_t) vector_pop(vm->stack);
+        intptr_t array_ptr = (intptr_t) vector_pop(vm->stack);
         VMArray* array = (VMArray*) get_obj(array_ptr);
         array->items[get_int(pos)] = value;
         value = vm->null;
     } else if(strcmp(name, "length") == 0) {
-        intptr_t array_ptr = vector_pop(vm->stack);
+        intptr_t array_ptr = (intptr_t) vector_pop(vm->stack);
         VMArray* array = (VMArray*) get_obj(array_ptr);
         value = create_int(array->length);
     } else {

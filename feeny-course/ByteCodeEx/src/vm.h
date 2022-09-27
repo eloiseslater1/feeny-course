@@ -45,13 +45,13 @@ typedef struct {
 typedef struct {
     long tag;
     void* parent;
-    void* slots[];
+    intptr_t slots[];
 } VMObj;
 
 typedef struct {
     long tag;
     long length;
-    intptr_t* items[];
+    intptr_t items[];
 } VMArray;
 
 
@@ -63,8 +63,8 @@ typedef struct {
     Vector* stack;
     Heap* heap;
     char* ip;
-    void** genv;
     int genv_size;
+    intptr_t* genv;
 } VM;
 
 typedef struct {
